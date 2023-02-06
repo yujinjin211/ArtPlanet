@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artplanet.myapp.dao.IThumbnailRepository">
+
+	<select id="findByExhibitionNo" resultType="com.artplanet.myapp.model.ThumbnailVO">
+		select * from thumbnail_file_info where exhibition_no = #{exhibition_no}
+	</select>
+	
+	<select id="getThumbnail" resultType="com.artplanet.myapp.model.ThumbnailVO">
+		select *
+		from thumbnail_file_info
+		where exhibition_no = #{exhibition_no}
+	</select>
+
+</mapper>

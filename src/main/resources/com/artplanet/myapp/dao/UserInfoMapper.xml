@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artplanet.myapp.dao.IUserInfoRepository">
+	
+	<select id="getUserList" resultType="com.artplanet.myapp.model.UserInfoVO">
+		<![CDATA[
+			select * from user_info
+		]]>
+		
+	</select>
+	
+	<select id="readById" resultType="com.artplanet.myapp.model.UserInfoVO">
+		select * from user_info where id = #{id}
+	</select>
+	
+	<insert id="insertUserInfo">
+		insert into user_info (id, name, password, nickName, email, phoneNumber, birth, gender, userType, regDate)
+		values (#{id}, #{name}, #{password}, #{nickName}, #{email}, #{phoneNumber}, #{birth}, #{gender}, #{userType}, SYSDATE)
+	</insert>
+	
+	<update id="updateUserInfo">
+		update user_info
+		set password = #{password},
+		nickName = #{nickName},
+		email = #{email},
+		phoneNumber = #{phoneNumber},
+		gender = #{gender}
+		where id = #{id}
+	</update>
+	
+	<delete id="withdrawUser">
+		delete from user_info where id = #{id}
+	</delete>
+
+	<select id="loginCheck" resultType="com.artplanet.myapp.model.UserInfoVO">
+		select * from user_info where id=#{id} and password=#{password}
+	</select>
+	
+	<select id="userCheck" resultType="com.artplanet.myapp.model.UserInfoVO">
+		select * from user_info where id=#{id} and password=#{password}
+	</select>
+	
+</mapper>

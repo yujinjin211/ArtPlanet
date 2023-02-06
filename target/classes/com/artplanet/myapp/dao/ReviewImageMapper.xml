@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artplanet.myapp.dao.IReviewImageRepository">
+
+	<insert id="insertReviewImages">
+		insert into review_image (review_no, image_fileName, image_directory, uuid)
+		values (#{review_no}, #{image_fileName}, #{image_directory}, #{uuid})
+	</insert>
+	
+	<delete id="deleteReviewImages">
+		delete from review_image where uuid = #{uuid}
+	</delete>
+	
+	<select id="findByExhibitionNo" resultType="com.artplanet.myapp.model.ReviewImageVO">
+		select * from review_image where review_no = #{review_no}
+	</select>
+
+</mapper>

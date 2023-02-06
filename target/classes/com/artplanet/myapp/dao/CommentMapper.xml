@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artplanet.myapp.dao.ICommentRepository">
+
+	<insert id="insert">
+		insert into review_comment (comment_no, review_no, comment_id, comment_nickName, comment_content, comment_regDate, comment_parent)
+		values (comment_no_seq.nextval, #{review_no}, #{comment_id}, #{comment_nickName}, #{comment_content}, SYSDATE, 0)
+	</insert>
+	
+	<select id="read" resultType="com.artplanet.myapp.model.CommentVO">
+		select * from review_comment where comment_no = #{comment_no}
+	</select>
+	
+	<delete id="delete">
+		delete from review_comment where comment_no = #{comment_no}
+	</delete>
+
+	<update id="update">
+		update review_comment set comment = #{comment_content} where comment_no = #{comment_no}
+	</update>
+	
+	<select id="getListWithPaging" resultType="com.artplanet.myapp.model.CommentVO">
+		select comment_no, review_no, comment_id, comment_nickName, comment_content, comment_regDate, comment_parent
+		from review_comment
+		where review_no = #{review_no}
+		order by comment_no ASC
+	</select>
+	
+</mapper>

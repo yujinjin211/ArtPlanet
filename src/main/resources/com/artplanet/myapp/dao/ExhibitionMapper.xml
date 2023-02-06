@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artplanet.myapp.dao.IExhibitionInfoRepository">
+
+	
+
+	<!-- Map을 resultType를 선언할 경우에 key 가 대문자로 들어간다 (oracle 등에 한하여) -->
+	<select id="getAllExhibitionNo" resultType="hashmap">
+		select exhibition_no as exhibition_no, title as title
+		from exhibition_info
+	</select>
+	
+	<select id="readDetail" resultType="com.artplanet.myapp.model.Exhibition_InfoVO">
+		select *
+		from exhibition_info
+		where exhibition_no = #{exhibition_no}
+	</select>
+	
+	<resultMap type="com.artplanet.myapp.model.Exhibition_InfoVO" id="exhibitionMap">
+		<id property="exhibition_no" column="exhibition_no" />
+		<id property="place_no" column="place_no"/>
+		<id property="artist_no" column="artist_no"/>
+		<id property="title" column="title"/>
+		<id property="realm" column="realm"/>
+		<id property="price" column="price"/>
+		<id property="startDate" column="startDate"/>
+		<id property="endDate" column="endDate"/>
+		<id property="intro" column="intro"/>
+		<id property="likeCount" column="likeCount"/>
+		<id property="endYn" column="endYn"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.Artist_InfoVO" id="artistMap">
+		<id property="artist_no" column="artist_no" />
+		<id property="artist_name" column="artist_name"/>
+		<id property="introduce" column="introduce"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.Place_InfoVO" id="placeMap">
+		<id property="place_no" column="place_no"/>
+		<id property="place" column="place"/>
+		<id property="sido" column="sido"/>
+		<id property="gungu" column="gungu"/>
+		<id property="code" column="code"/>
+		<id property="address" column="address"/>
+		<id property="url" column="url"/>
+		<id property="tel" column="tel"/>
+		<id property="operating_hour" column="operating_hour"/>
+		<id property="bookmark" column="bookmark"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ThumbnailVO" id="thumbnailMap">
+		<id property="exhibition_no" column="exhibition_no"/>
+		<id property="fileName" column="fileName"/>
+		<id property="filePath" column="filePath"/>
+		<id property="uuid" column="uuid"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.UserLikeExhVO" id="userLikeExhMap">
+		<id property="exhibition_no" column="userexhibition_no"/>
+		<id property="id" column="userid"/>
+		<id property="likeNo" column="userlikeNo"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ThemeVO" id="themeMap">
+		<id property="theme_no" column="theme_no"/>
+		<id property="theme_name" column="theme_name"/>
+		<id property="theme_name_kor" column="theme_name_kor"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ExhibitionThemeVO" id="exhThemeMap">
+		<id property="theme_no" column="theme_no"/>
+		<id property="exhibition_no" column="themeExhibition_no"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.JoinExhibitionVO" id="JoinExhibitionVO">
+		<collection property="exhibition" resultMap="exhibitionMap" />
+		<collection property="artist" resultMap="artistMap" />
+		<collection property="place" resultMap="placeMap" />
+		<collection property="thumbnail" resultMap="thumbnailMap" />
+		<collection property="userLikeExh" resultMap="userLikeExhMap" />
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.JoinExhibitionThemeVO" id="JoinExhibitionThemeVO">
+		<collection property="exhibition" resultMap="exhibitionMap" />
+		<collection property="artist" resultMap="artistMap" />
+		<collection property="place" resultMap="placeMap" />
+		<collection property="thumbnail" resultMap="thumbnailMap" />
+		<collection property="theme" resultMap="themeMap" />
+		<collection property="exhTheme" resultMap="exhThemeMap" />
+		<collection property="userLikeExh" resultMap="userLikeExhMap" />
+	</resultMap>
+	
+	<select id="getJoinListWithPagingID" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+	        from (
+	                select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+	                        rownum rn, e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userExhibitionNo",
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as "userId",
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userLikeNo"
+						          
+	                from exhibition_info e, artist_info a, place_info p, thumbnail_file_info t
+	                
+	                where rownum <= #{cri.pageNum} * #{cri.amount}
+	                        and endYn like 'n' 
+	                        and a.artist_no = e.artist_no 
+	                        AND p.place_no = e.place_no 
+	                        AND t.exhibition_no = e.exhibition_no
+	                order by e.startDate DESC
+	            )
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getJoinListWithPaging" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+					rownum rn, exhibition_info.exhibition_no, exhibition_info.title, exhibition_info.price, exhibition_info.realm, exhibition_info.startDate, exhibition_info.endDate, exhibition_info.likeCount, exhibition_info.endYn, artist_info.artist_name, place_info.place, place_info.sido, thumbnail_file_info.fileName, thumbnail_file_info.filepath, thumbnail_file_info.uuid
+					from exhibition_info, artist_info, place_info, thumbnail_file_info
+					where rownum <= #{cri.pageNum} * #{cri.amount} and endYn like 'n' and artist_info.artist_no = exhibition_info.artist_no AND place_info.place_no = exhibition_info.place_no AND thumbnail_file_info.exhibition_no = exhibition_info.exhibition_no
+					order by exhibition_info.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getRegionWithPaging" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+					rownum rn, exhibition_info.exhibition_no, exhibition_info.title, exhibition_info.price, exhibition_info.realm, exhibition_info.startDate, exhibition_info.endDate, exhibition_info.likeCount, exhibition_info.endYn, artist_info.artist_name, place_info.place, place_info.sido, thumbnail_file_info.fileName, thumbnail_file_info.filepath, thumbnail_file_info.uuid
+					from exhibition_info, artist_info, place_info, thumbnail_file_info
+					where rownum <= #{cri.pageNum} * #{cri.amount} and endYn like 'n' and artist_info.artist_no = exhibition_info.artist_no AND place_info.place_no = exhibition_info.place_no AND thumbnail_file_info.exhibition_no = exhibition_info.exhibition_no AND place_info.sido = #{sido} 
+					order by exhibition_info.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getRegionWithPagingID" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+							rownum rn, e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userExhibitionNo",
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as "userId",
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userLikeNo"
+                    
+					from 	exhibition_info e, artist_info a, place_info p, thumbnail_file_info t
+					
+					where 	rownum <= #{cri.pageNum} * #{cri.amount} 
+							and endYn like 'n' 
+		                    and a.artist_no = e.artist_no 
+		                    AND p.place_no = e.place_no 
+		                    AND t.exhibition_no = e.exhibition_no 
+		                    AND p.sido = #{sido}
+					order by e.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getThemeWithPaging" resultMap="JoinExhibitionThemeVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+					rownum rn, e.exhibition_no, e.title, e.price, e.realm, e.startDate, e.endDate, e.likeCount, e.endYn, a.artist_name, p.place, p.sido, t.fileName, t.filepath, t.uuid, th.theme_no, th.theme_name, et.exhibition_no as themeExhibition_no
+					from exhibition_info e, artist_info a, place_info p, thumbnail_file_info t, theme th, exhibition_theme et
+					where rownum <= #{cri.pageNum} * #{cri.amount} and a.artist_no = e.artist_no 
+                            AND p.place_no = e.place_no 
+                            AND t.exhibition_no = e.exhibition_no 
+                            AND th.theme_no = et.theme_no
+                            AND et.exhibition_no = e.exhibition_no
+                            AND th.theme_no = #{theme_no}
+					order by e.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getThemeWithPagingID" resultMap="JoinExhibitionThemeVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+							rownum rn, e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid, th.theme_no, th.theme_name, et.exhibition_no as themeExhibition_no,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as userExhibitionNo,
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as userId,
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as userLikeNo
+                    
+					from 	exhibition_info e, artist_info a, place_info p, thumbnail_file_info t, theme th, exhibition_theme et
+					
+					where 	rownum <= #{cri.pageNum} * #{cri.amount}
+							and endYn like 'n' 
+		                    and a.artist_no = e.artist_no 
+		                    AND p.place_no = e.place_no 
+		                    AND t.exhibition_no = e.exhibition_no
+                            AND th.theme_no = et.theme_no
+                            AND et.exhibition_no = e.exhibition_no
+                            AND th.theme_no = #{theme_no}
+					order by e.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getThemeList" resultType="com.artplanet.myapp.model.ThemeVO">
+		select *
+		from theme
+	</select>
+	
+	<select id="getExhListWithPaging" resultType="com.artplanet.myapp.model.Exhibition_InfoVO">
+		<![CDATA[
+			select *
+			from (
+				select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+				rownum rn, exhibition_info.exhibition_no, exhibition_info.title, exhibition_info.price, exhibition_info.realm, exhibition_info.startDate, exhibition_info.endDate, exhibition_info.likeCount, exhibition_info.endYn, artist_info.artist_name, place_info.place, thumbnail_file_info.fileName, thumbnail_file_info.filepath, thumbnail_file_info.uuid
+				from exhibition_info, artist_info, place_info, thumbnail_file_info
+				where rownum <= #{pageNum} * #{amount} and endYn like 'n' and artist_info.artist_no = exhibition_info.artist_no AND place_info.place_no = exhibition_info.place_no AND thumbnail_file_info.exhibition_no = exhibition_info.exhibition_no
+				)
+			where rn > (#{pageNum} -1) * #{amount}
+		]]>
+	</select>
+	
+	<select id="getMainList" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+				from (
+				    select exhibition_info.exhibition_no, exhibition_info.title, exhibition_info.price, exhibition_info.realm, exhibition_info.startDate, exhibition_info.endDate, exhibition_info.likeCount, exhibition_info.endYn, artist_info.artist_name, place_info.place, place_info.sido, thumbnail_file_info.fileName, thumbnail_file_info.filepath, thumbnail_file_info.uuid
+				    from exhibition_info, artist_info, place_info, thumbnail_file_info
+				    where exhibition_info.endYn like 'n' and artist_info.artist_no = exhibition_info.artist_no AND place_info.place_no = exhibition_info.place_no AND thumbnail_file_info.exhibition_no = exhibition_info.exhibition_no
+				    order by exhibition_info.startDate DESC
+				    )
+			where rownum <= 3
+		]]>
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+		<![CDATA[
+			select count(*) from exhibition_info where exhibition_no > 0 and endYn like 'n'
+		]]>
+	</select>
+	
+	<select id="getLikeExh" resultType="com.artplanet.myapp.model.UserLikeExhVO">
+		select *
+		from user_like_exhibition
+		where id = #{id}
+	</select>
+	
+	<insert id="insertHeart">
+		insert into user_like_exhibition(exhibition_no, id, likeNo) values(#{exhibition_no}, #{id}, likeNo_seq.nextval)
+	</insert>
+	
+	<delete id="deleteHeart">
+		delete from user_like_exhibition where exhibition_no = #{exhibition_no} and id = #{id}
+		</delete>
+	
+</mapper>

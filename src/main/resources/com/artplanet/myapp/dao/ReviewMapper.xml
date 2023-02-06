@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artplanet.myapp.dao.IReviewRepository">
+
+	<select id="getReviewList" resultType="com.artplanet.myapp.model.ReviewVO">
+		<![CDATA[
+			select * from review where review_no > 0 and deleteYn like 'N' order by review_no desc
+		]]>
+	</select>
+	
+	<select id="getListWithPaging" resultType="com.artplanet.myapp.model.ReviewVO">
+		<![CDATA[
+			select review_no, review_title, writer_nickName, writeDate, modDate, readCount
+			from (
+				select /*+INDEX_DESC(review pk_review)*/
+				rownum rn, review_no, review_title, writer_nickName, writeDate, modDate, readCount
+				from review
+				where rownum <= #{pageNum} * #{amount} and deleteYn like 'N'
+				)
+			where rn > (#{pageNum} -1) * #{amount}
+		]]>
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+		<![CDATA[
+			select count(*) from review where review_no > 0 and deleteYn like 'N'
+		]]>
+	</select>
+	
+	<insert id="insertReview">
+		insert into review (review_no, id, exhibition_no,
+		writer_nickName, review_title, review_content, writeDate, modDate, readCount)
+		 values (review_no_seq.nextval,
+		 #{id}, #{exhibition_no}, #{writer_nickName}, #{review_title}, #{review_content},
+		 SYSDATE, SYSDATE, 0)
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="review_no" order="BEFORE" resultType="int">
+			select review_no_seq.nextval from dual
+		</selectKey>
+		
+		insert into review (
+			review_no, id, exhibition_no,
+			writer_nickName, review_title, review_content, writeDate, modDate, readCount
+		)
+		 values (
+		 	#{review_no}, #{id}, #{exhibition_no}, #{writer_nickName},
+		 	#{review_title}, #{review_content}, SYSDATE, SYSDATE, 0
+		 )
+	</insert>
+	
+	<select id="readReview" resultType="com.artplanet.myapp.model.ReviewVO">
+		select * from review where review_no = #{review_no}
+	</select>
+	
+	<update id="deleteReview">
+		update review
+		set deleteYn=Y
+		where review_no=#{review_no}
+	</update>
+	
+	<update id="updateReview">
+		update review
+		set review_title=#{review_title},
+		review_content=#{review_content},
+		modDate=SYSDATE
+		where review_no=#{review_no}
+	</update>
+	
+	<update id="readCount">
+		update review
+		set readCount = readCount +1
+		where review_no = #{review_no}
+	</update>
+
+</mapper>
