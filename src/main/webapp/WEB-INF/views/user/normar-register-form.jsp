@@ -15,11 +15,12 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <header>
         <div>
-            <a class="logo-text" href="home/index">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">
@@ -50,10 +51,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -64,8 +65,8 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="news.jsp">뉴스레터</a>
-                        <a href="review.jsp">리뷰</a>
+                        <a href="../review/news">뉴스레터</a>
+                        <a href="../review/review">리뷰</a>
                     </div>
                 </li>
 				<!--  
@@ -101,7 +102,7 @@
                         </tr>
                         <tr>
                             <td><span style="color: red;">*</span>ID</td>
-                            <td><input type="text" name="id" placeholder="4~12자 사이 "></td>
+                            <td><input type="text" name="id" id="id" placeholder="4~12자 사이 "></td>
                             <div id="result">
                             
                             </div>
@@ -177,41 +178,12 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <h3>관심 키워드 선택</h3>
-                                <hr>
-                                <div class="keyword-select">
-                                    <input type="button" value="미디어아트">
-                                    <input type="button" value="서양화">
-                                    <input type="button" value="동양화">
-                                    <input type="button" value="인물화">
-                                    <input type="button" value="조각">
-                                    <input type="button" value="설치미술">
-                                    <input type="button" value="사진">
-                                    <input type="button" value="개인전">
-                                    <input type="button" value="졸업전시">
-                                    <br>
-                                    <input type="button" value="사진">
-                                    <input type="button" value="개인전">
-                                    <input type="button" value="졸업전시">
-                                    <input type="button" value="졸업전시">
-                                    <br>
-                                    <input type="button" value="사진">
-                                    <input type="button" value="개인전">
-                                    <input type="button" value="졸업전시">
-                                    <input type="button" value="졸업전시">
-                                    <input type="button" value="졸업전시">
-                                </div>
+                                
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <div>
-                                	이용약관동의 <input type="checkbox" name="agree">
-                                </div>
-                                <div style="background-color: #f1f1f1; border-radius: 10px; padding: 10px; margin: 10px 0 10px 0; overflow-y: scroll;">
-                                    <p>약관이 들어가는 자리</p>
-                                </div>
-                                <hr>
+                                
                             </td>
                         </tr>
                         
@@ -221,8 +193,21 @@
                         <input type="submit" value="확인" onclick="return join()">
                         <input type="reset" value="다시입력">
                     </div>
-
                 </form>
+                
+                <h3>관심 키워드 선택</h3>
+                <hr>
+                <div class="keyword-select" id="keyword-select">
+	                <c:forEach var="theme" items="${themeList }" varStatus="status">
+	                	<button id="keyword${theme.theme_no }" value="${theme.theme_no }" >${theme.theme_name_kor }</button>
+	                </c:forEach>
+                </div>
+                                
+               <div>이용약관동의 <input type="checkbox" name="agree"></div>
+	               <div style="background-color: #f1f1f1; border-radius: 10px; padding: 10px; margin: 10px 0 10px 0; overflow-y: scroll;">
+	               		<p>약관이 들어가는 자리</p>
+	               </div>
+               <hr>
             </div>
     
         </div>
@@ -250,9 +235,79 @@
     </footer>
     
     <script src="/resource/js/member.js"></script>
+	
+	<script type="text/javascript">
+	<c:forEach var="theme" items="${themeList}" varStatus="status">
+	$(document).on("click", "#keyword${theme.theme_no}", function(){
+		var theme_no = $("#keyword${theme.theme_no }").val();
+		var id = $("#id").val();
+		console.log("theme_no : " + theme_no + ", id : " + id);
+		
+		function changeBtn(list) {
+			if(!list || list.length == 0) { return; }
+			var str = "";
+			
+			for(var i = 0; i < list.length; i++) {
+				if(list[i].id == null) {
+					str += "<button id='keyword" + list[i].theme_no + "' value='" + list[i].theme_no + "' >" + list[i].theme_name_kor + "</button>";
+				} else {
+					str += "<button id='selectKeyword" + list[i].theme_no + "' value='" + list[i].theme_no + "' style='background-color: #444; color: white;' >" + list[i].theme_name_kor + "</button>";
+				}
+				$("#keyword-select").html(str);
+			}
+		}
+		
+		//Ajax로 전송
+		$.ajax({
+		url : './insertKeyword',
+		data : {theme_no : theme_no, id : id},
+		type : 'POST',
+		dataType : 'json',
+		success : function(result) {
+				changeBtn(result);
+			}
+		}); //end ajax
+		
+	});
+	</c:forEach>
+	</script>
+	
+	<script type="text/javascript">
+	<c:forEach var="theme" items="${themeList}" varStatus="status">
+	$(document).on("click", "#selectKeyword${theme.theme_no}", function() {
+		var theme_no = $("#selectKeyword${theme.theme_no }").val();
+		var id = $("#id").val();
+		console.log("theme_no : " + theme_no + ", id : " + id);
+		
+		function changeBtn(list) {
+			if(!list || list.length == 0) { return; }
+			var str = "";
+			
+			for(var i = 0; i < list.length; i++) {
+				if(list[i].id == null) {
+					str += "<button id='keyword" + list[i].theme_no + "' value='" + list[i].theme_no + "' >" + list[i].theme_name_kor + "</button>";
+				} else {
+					str += "<button id='selectKeyword" + list[i].theme_no + "' value='" + list[i].theme_no + "' style='background-color: #444; color: white;' >" + list[i].theme_name_kor + "</button>";
+				}
+				$("#keyword-select").html(str);
+			}
+		}
+		
+		//Ajax로 전송
+		$.ajax({
+		url : './deleteKeyword',
+		data : {theme_no : theme_no, id : id},
+		type : 'POST',
+		dataType : 'json',
+		success : function(result) {
+				changeBtn(result);
+			}
+		}); //end ajax
+	})
+	</c:forEach>
+	</script>
 
     <script>
-
         // 이메일 중복확인 함수
         function dpcCheck() {
             alert('사용할 수 있는 이메일입니다.');

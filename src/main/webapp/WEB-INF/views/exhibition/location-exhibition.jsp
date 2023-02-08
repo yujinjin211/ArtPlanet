@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,11 +16,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cc88b357d87beb360f1bd06b4b42bc5"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0cc88b357d87beb360f1bd06b4b42bc5&libraries=services,clusterer,drawing"></script>
 </head>
 <body>
     <header>
         <div>
-            <a class="logo-text" href="index.jsp">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">
@@ -29,31 +34,40 @@
                     </div>
                 </div>
 
+                <c:if test="${user == null }">
                 <div class="top-menu">
-                    <a href="login.jsp">로그인</a>
+                    <a href="../user/login">로그인</a>
+                </div>
+                </c:if>
+                
+                <c:if test="${user != null }">
+                <c:if test="${user.userType eq 'normar'}">
+                <div class="top-menu">
+                    <a href="../user/normar-mypage">마이페이지</a>
+                </div>
+                </c:if>
+                <c:if test="${user.userType eq 'manager'}">
+                <div class="top-menu">
+                    <a href="../user/manager-mypage">마이페이지</a>
+                </div>
+                </c:if>
+                <div class="top-menu">
+                	<a href="../user/logout">로그아웃</a>
                 </div>
                 <div class="top-menu">
-                    <a href="normar-mypage.jsp">마이페이지</a>
+                    <a><b></b>${user.nickName}님</a>
                 </div>
-                <div class="top-menu">
-                    <a href="manager-mypage.jsp">마이페이지</a>
-                </div>
-                <div class="top-menu">
-                	<a href="logout.jsp">로그아웃</a>
-                </div>
-                <div class="top-menu">
-                    <a><b></b>님</a>
-                </div>
+                </c:if>
             </div>
 
             <ul>
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -64,14 +78,16 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="news.jsp">뉴스레터</a>
-                        <a href="review.jsp">리뷰</a>
+                        <a href="../review/news">뉴스레터</a>
+                        <a href="../review/review">리뷰</a>
                     </div>
                 </li>
 
+                <!--  
                 <li>
                 <a href="art-shop.jsp">아트샵</a>
                 </li>
+                -->
             </ul>
         </div>
     </header>
@@ -86,18 +102,19 @@
             <div class="search-container">
                 <form action="/action_page.php">
                     <label style="font-size: 20px; font-weight: bold;">지역</label>
-                    <input type="text" placeholder="Search.." name="search">
+                    <input type="text" placeholder="검색" name="search">
                     <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
         </div>
 
         <div style="position: relative; width: 1440px; height: 1000px; margin: 0 auto;">
-            <div class="area" style="display: block; width: 820px; float: left;">지도가 위치하는 자리</div>
+            <div id="map" class="area" style="display: block; width: 820px; height: 930px; float: left;">
+            </div>
 
             <div style="display: block; width: 560px; float: right;">
                 <div class="card-row">
-                    <img src="resource/images/non300-1.jpg">
+                    <img src="/resource/images/non300-1.jpg">
                     <div class="wrapper-container">
                         <a id="wc-a">
                             <i class="fa-regular fa-heart" style="font-size: x-large;"></i>
@@ -113,7 +130,7 @@
                 </div>
 
                 <div class="card-row">
-                    <img src="resource/images/non300-2.jpg">
+                    <img src="/resource/images/non300-2.jpg">
                     <div class="wrapper-container">
                         <a id="wc-a">
                             <i class="fa-regular fa-heart" style="font-size: x-large;"></i>
@@ -127,18 +144,30 @@
                         <button class="chBtn">다녀왔어요.</button>
                       </div>
                 </div>
+                
+                <!-- 페이지 -->
+		        <div class="pagination">
+		                        
+		        <c:if test="${pageMaker.prev }">
+		        	<a href="${pageMaker.startPage -1}">&laquo;</a>
+		        </c:if>
+		                        
+		        <c:forEach var="num" 
+		        		begin="${pageMaker.startPage }" 
+		        		end="${pageMaker.endPage }">
+					﻿	<li class=paginate_button "${pageMaker.cri.pageNum == num ? "active":"" }" >
+		            	<a href="${num }">${num}</a>
+		        </c:forEach>
+		                        
+		        <c:if test="${pageMaker.next}">
+		        	<a href="${pageMaker.endPage +1}">&raquo;</a>
+		        </c:if>
+		        </div>
+		        ﻿<form id="actionForm" action="../exhibition/location-exhibition" method="get">
+					<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">	
+					
+				</form>
             </div>
-        </div>
-
-        <!-- 페이지 -->
-        <div class="pagination">
-            <a href="#">&laquo;</a>
-            <a href="#">1</a>
-            <a class="active" href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">&raquo;</a>
         </div>
 
     </div>
@@ -163,6 +192,29 @@
         <div style="text-align: center; color: gray;"> ©2022 Yujin. All rights
             reserved.</div>
     </footer>
+    
+    <script type="text/javascript">
+	    $(document).ready(function(){
+	    	
+	    	var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	    	var options = { //지도를 생성할 때 필요한 기본 옵션
+	    		center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+	    		level: 3 //지도의 레벨(확대, 축소 정도)
+	    	};
+
+	    	var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+	    	
+	    	var actionForm = $("#actionForm");
+			$(".paginate_button a").on("click", function(e){
+				e.preventDefault();
+				console.log("click");
+				actionForm.find("input[name='pageNum']")
+							.val($(this).attr("href"));
+				actionForm.submit();
+			});
+	    	
+	    });
+    </script>
 
     <script>
         filterSelection("all")

@@ -94,7 +94,7 @@
             <a style="font-size: 48px; font-weight: bold;">주제별 진행중인 전시</a>
             <hr style="border: solid 6px; width: 1440px; margin-bottom: 20px;">
         </div>
-
+        
         <div id="myBtnContainer" style="width: 1440px; margin: auto;">
             <button class="btn active" onclick="filterSelection('all')"> 전체보기</button>
             <!--  
@@ -103,12 +103,21 @@
             <button class="btn" onclick="filterSelection('fruits')" value="">졸업전시회</button>
            	-->
         </div>
-	        <div class="outer-container" style="width: 1440px; margin: auto; margin-bottom: 20px;">
-	        <c:forEach var="theme" items="${themeList }" varStatus="status">
-	            <button class="filterBtn cars" id="fBtnC${status.count }" value="${theme.theme_no }">${theme.theme_name_kor }</button>
-	        </c:forEach>
-	        </div>
         
+	    <div class="outer-container" style="width: 1440px; margin: auto; margin-bottom: 20px;">
+	    
+		    <c:forEach var="theme" items="${themeList }" varStatus="status">
+		    	<button class="filterBtn cars" id="fBtnC${status.count }" value="${theme.theme_no }">${theme.theme_name_kor }</button>
+		    </c:forEach>
+		    
+	    </div>
+        <div class="div-style" style="margin-bottom: 20px;">
+	        <div style="text-align: right;">
+		        <a href="#">무료</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+		        <a href="#">유료</a>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+		        <a href="#">전체</a> &nbsp;&nbsp;&nbsp;
+	        </div>
+        </div>
     
         <div class="wrapper thisArea">
         	<c:if test="${exhList == null}">

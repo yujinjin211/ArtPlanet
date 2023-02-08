@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.artplanet.myapp.dao.IUserInfoRepository;
 import com.artplanet.myapp.model.UserInfoVO;
@@ -35,6 +36,7 @@ public class UserInfoService implements IUserInfoService {
 		return userInfoRepository.readById(userid);
 	}
 	
+	@Transactional
 	@Override
 	public void insertUserInfo(UserInfoVO user) {
 		log.info("insertUserInfo........." + user);

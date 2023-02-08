@@ -70,7 +70,7 @@
                         <a href="exhibition/trend-exhibition.jsp">트렌드 전시 찾기</a>
                         <a href="exhibition/region-exhibition">지역별 전시 찾기</a>
                         <a href="exhibition/theme-exhibition">주제별 전시 찾기</a>
-                        <a href="exhibition/location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 

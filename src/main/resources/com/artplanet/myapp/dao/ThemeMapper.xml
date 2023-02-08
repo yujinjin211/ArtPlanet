@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artplanet.myapp.dao.IThemeRepository">
+
+	<select id="getThemeList" resultType="com.artplanet.myapp.model.ThemeVO">
+		select *
+		from theme
+	</select>
+	
+	<insert id="insertUserTheme">
+		insert into user_theme(id, theme_no) values (#{id}, #{theme_no})
+	</insert>
+	
+	<delete id="deleteUserTheme">
+		delete from user_theme where id = #{id} and theme_no = #{theme_no}
+	</delete>
+	
+	<select id="getUserThemeList" resultType="com.artplanet.myapp.model.UserThemeVO">
+		select t.theme_no, t.theme_name_kor, (select ut.id 
+											    from user_theme ut 
+											   where t.theme_no = ut.theme_no 
+											   	     and ut.id = #{id}
+											  ) as id
+		from theme t
+	</select>
+
+</mapper>

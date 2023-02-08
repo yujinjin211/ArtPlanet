@@ -1,6 +1,14 @@
 package com.artplanet.myapp.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,17 +17,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.artplanet.myapp.model.ExhCriteria;
+import com.artplanet.myapp.model.JoinExhibitionThemeVO;
+import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.UserInfoVO;
+import com.artplanet.myapp.model.UserThemeVO;
+import com.artplanet.myapp.service.IThemeService;
 import com.artplanet.myapp.service.IUserInfoService;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @RequestMapping("/user/*")
 @Controller
 public class UserController {
 	
 	@Autowired
 	IUserInfoService userInfoService;
+	
+	@Autowired
+	IThemeService themeService;
 	
 	//회원가입 페이지 이동
 	@RequestMapping(value = "/register")
@@ -31,6 +51,7 @@ public class UserController {
 	@GetMapping(value="/joinNormar")
 	public String joinNormar(Model model) {
 		model.addAttribute("user", new UserInfoVO());
+		model.addAttribute("themeList", themeService.getThemeList());
 		return "user/normar-register-form";
 	}
 	
@@ -62,6 +83,30 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("message", e.getMessage());
 		}
 		return "redirect:/user/join-success/" + user.getId();
+	}
+	
+	//관심 키워드 선택 Ajax
+	@PostMapping(value = "/insertKeyword")
+	@ResponseBody
+	public ResponseEntity<List<UserThemeVO>> insertKeyword(String theme_no, String id) {
+		log.info("ID : " + id + ", theme_no : " + theme_no);
+		themeService.insertUserTheme(id, theme_no);
+		
+		List<UserThemeVO> userThemeList = themeService.getUserThemeList(id);
+		for(int i = 0; i < userThemeList.size(); i++) {
+			System.out.println(userThemeList.get(i));
+		}
+		
+		return new ResponseEntity<>(userThemeList, HttpStatus.OK);
+	}
+	
+	//관심 키워드 선택해제 Ajax
+	@PostMapping(value = "/deleteKeyword")
+	@ResponseBody
+	public ResponseEntity<List<UserThemeVO>> deleteKeyword(String theme_no, String id) {
+		log.info("ID : " + id + ", theme_no : " + theme_no);
+		themeService.deleteUserTheme(id, theme_no);
+		return new ResponseEntity<>(themeService.getUserThemeList(id), HttpStatus.OK);
 	}
 	
 	//회원가입성공 후 성공페이지 이동

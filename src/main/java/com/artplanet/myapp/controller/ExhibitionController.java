@@ -75,7 +75,6 @@ public class ExhibitionController {
 			List<JoinExhibitionVO> exhList = exhibitionService.getJoinListWithPagingID(cri, userInfo.getId());
 			model.addAttribute("exhList", exhList);
 		}
-		
 	}
 	
 	//주제별 전시정보 목록 조회
@@ -98,7 +97,28 @@ public class ExhibitionController {
 			List<JoinExhibitionVO> exhList = exhibitionService.getJoinListWithPagingID(cri, userInfo.getId());
 			model.addAttribute("exhList", exhList);
 		}
+	}
+	
+	//현재위치별 전시정보 목록 조회
+	@GetMapping("/location-exhibition")
+	public void locationExhibition(ExhCriteria cri, Model model, HttpSession session) {
+		int total = exhibitionService.getTotalCount(cri);
+		log.info("total : " + total);
+		model.addAttribute("pageMaker", new PageDTO(cri, total));
 		
+		List<ThemeVO> themeList = exhibitionService.getThemeList();
+		model.addAttribute("themeList", themeList);
+		
+		//비회원일때
+		if(session.getAttribute("user") == null) {
+			List<JoinExhibitionVO> exhList = exhibitionService.getJoinListWithPaging(cri);
+			model.addAttribute("exhList", exhList);
+		} else { //회원일때
+			UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+			log.info("user info : " + userInfo.getId());
+			List<JoinExhibitionVO> exhList = exhibitionService.getJoinListWithPagingID(cri, userInfo.getId());
+			model.addAttribute("exhList", exhList);
+		}
 	}
 	
 	//전시 상세 조회

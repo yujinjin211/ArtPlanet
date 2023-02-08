@@ -915,7 +915,8 @@ div.content {
 
 /* 키워드 선택 */
 .keyword-select {
-  width: max-content;
+  width: 1000px;
+  /* width: max-content; */
   margin: auto;
   padding: 20px;
   text-align: center;
@@ -928,6 +929,17 @@ div.content {
   border-radius: 15px;
   border: none;
   margin: 3px;
+  cursor: pointer;
+}
+
+.keyword-select button {
+  background-color: #f1f1f1;
+  color: #444;
+  padding: 15px;
+  border-radius: 15px;
+  border: none;
+  margin: 3px;
+  cursor: pointer;
 }
 
 .keyword-select input[type=button]:hover {
@@ -935,10 +947,17 @@ div.content {
   color: white;
 }
 
+.keyword-select button:hover {
+  background-color: #444;
+  color: white;
+}
+
+/*
 .keyword-select input[type=button]:active {
   background-color: #444;
   color: white;
 }
+*/
 
 /* 전시 장소 상세 페이지 div에 적용 */
 
