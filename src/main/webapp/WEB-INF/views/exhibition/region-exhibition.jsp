@@ -143,7 +143,7 @@
                 					<a id="wc-a" class="regular${status.count }"><i class="fa-regular fa-heart" id="heart${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
                 				</c:when>
                 				<c:otherwise>
-                					<a id="wc-a" class="solid${status.count }"><i class="fa-solid fa-heart" id="sheart${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
+                					<a id="wc-a" class="solid${status.count }"><i class="fa-solid fa-heart" id="sheart${status.count }" style="font-size: x-large; color: red; cursor: pointer;"></i></a>
 	                			</c:otherwise>
                 			</c:choose>
                 		</c:when>
@@ -180,7 +180,7 @@
         <c:forEach var="num" 
         		begin="${pageMaker.startPage }" 
         		end="${pageMaker.endPage }">
-			﻿	<li class=paginate_button "${pageMaker.cri.pageNum == num ? "active":"" }" >
+			﻿	<li class=paginate_button "${pageMaker.cri3.pageNum == num ? "active":"" }" >
             	<a href="${num }">${num}</a>
         </c:forEach>
                         
@@ -189,8 +189,8 @@
         </c:if>
         </div>
         ﻿<form id="actionForm" action="../exhibition/region-exhibition" method="get">
-			<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">	
-			
+			<input type="hidden" name="pageNum" value="${pageMaker.cri3.pageNum }">	
+			<input type="hidden" name="amount" value="${pageMaker.cri3.amount }">
 		</form>
 
     </div>
@@ -232,72 +232,6 @@
 			});
 			</c:forEach>
 			
-			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
-			//빈 하트 클릭했을 때(insert)
-			$("#heart${status.count}").on("click", function(e) {
-				var exhibition_no = $("#exhNo${status.count}").val();
-				var id = '<c:out value="${user.id}" />';
-				
-				console.log("exhibition_no : " + exhibition_no + ", id : " + id);
-				
-				function insertHeart(arr) {
-					if(!arr || arr.length == 0) { return; }
-					
-					<c:forEach var="exhibition" items="${exhList}" varStatus="status">
-						var str = "<i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>";
-						$(".regular${status.count}").html(str);
-						location.reload();
-					</c:forEach>
-				}
-				
-				//Ajax로 전송
-    			$.ajax({
-				url : './insertHeart',
-				data : {exhibition_no : exhibition_no, id : id},
-				type : 'POST',
-				dataType : 'json',
-				success : function(result) {
-						console.log("result : " + result);
-						insertHeart(result);
-					}
-				}); //end ajax
-				
-			});
-			</c:forEach>
-			
-			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
-			//꽉찬 하트 클릭했을 때(delete)
-			$("#sheart${status.count}").on("click", function(e) {
-				var exhibition_no = $("#exhNo${status.count}").val();
-				var id = '<c:out value="${user.id}" />';
-				
-				console.log("exhibition_no : " + exhibition_no + ", id : " + id);
-				
-				function deleteHeart(arr){
-					if(!arr || arr.length == 0) { return; }
-					
-					<c:forEach var="exhibition" items="${exhList}" varStatus="status">
-						var str = "<i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>";
-						$(".solid${status.count}").html(str);
-						location.reload();
-					</c:forEach>
-				}
-				
-				//Ajax로 전송
-    			$.ajax({
-				url : './deleteHeart',
-				data : {exhibition_no : exhibition_no, id : id},
-				type : 'POST',
-				dataType : 'json',
-				success : function(result) {
-						console.log("result : " + result);
-						deleteHeart(result);
-					}
-				}); //end ajax
-			})
-			
-			</c:forEach>
-			
 			$("#e_area").change(function(e) {
 				var sido = $("#e_area").val();
 				
@@ -328,7 +262,7 @@
 						        			str += "<a id='wc-a' class='regular" + ${status.count } + "'><i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
 						        		</c:when>
 						        		<c:otherwise>
-						        			str += "<a id='wc-a' class='solid" + ${status.count } + "'><i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+						        			str += "<a id='wc-a' class='solid" + ${status.count } + "'><i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; color: red; cursor: pointer;'></i></a>";
 						        		</c:otherwise>
 				        		    </c:choose>
 		        		        </c:when>
@@ -357,10 +291,8 @@
         		            $(".thisArea").html(str);
         				});
     				}
-    				
     				</c:forEach>
     			}
-				
 				
 				//Ajax로 전송
     			$.ajax({
@@ -377,6 +309,74 @@
 			});
     				
 		});
+	</script>
+	
+	<script type="text/javascript">
+	//빈 하트 클릭했을 때(insert)
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+		$(document).on("click", "#heart${status.count}", function() {
+			var exhibition_no = $("#exhNo${status.count}").val();
+			var id = '<c:out value="${user.id}" />';
+			
+			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+			
+			function insertHeart(arr) {
+				if(!arr || arr.length == 0) { return; }
+				
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+					var str = "<i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; color: red; cursor: pointer;'></i>";
+					$(".regular${status.count}").html(str);
+					location.reload();
+				</c:forEach>
+			}
+			
+			//Ajax로 전송
+			$.ajax({
+			url : './insertHeart',
+			data : {exhibition_no : exhibition_no, id : id},
+			type : 'POST',
+			dataType : 'json',
+			success : function(result) {
+					console.log("result : " + result);
+					insertHeart(result);
+				}
+			}); //end ajax
+		});
+	</c:forEach>
+	</script>
+	
+	<script type="text/javascript">
+	//꽉찬 하트 클릭했을 때(delete)
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+		$(document).on("click", "#sheart${status.count}", function() {
+			var exhibition_no = $("#exhNo${status.count}").val();
+			var id = '<c:out value="${user.id}" />';
+			
+			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+			
+			function deleteHeart(arr){
+				if(!arr || arr.length == 0) { return; }
+				
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+					var str = "<i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>";
+					$(".solid${status.count}").html(str);
+					location.reload();
+				</c:forEach>
+			}
+			
+			//Ajax로 전송
+			$.ajax({
+			url : './deleteHeart',
+			data : {exhibition_no : exhibition_no, id : id},
+			type : 'POST',
+			dataType : 'json',
+			success : function(result) {
+					console.log("result : " + result);
+					deleteHeart(result);
+				}
+			}); //end ajax
+		});
+	</c:forEach>
 	</script>
     
 </body>

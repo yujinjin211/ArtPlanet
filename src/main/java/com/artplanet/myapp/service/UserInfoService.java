@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.artplanet.myapp.dao.IUserInfoRepository;
+import com.artplanet.myapp.model.ProfileImageVO;
 import com.artplanet.myapp.model.UserInfoVO;
 
 import lombok.AllArgsConstructor;
@@ -65,5 +66,11 @@ public class UserInfoService implements IUserInfoService {
 	public UserInfoVO userCheck(UserInfoVO user) {
 		log.info("userCheck........." + user);
 		return userInfoRepository.userCheck(user);
+	}
+	
+	@Override
+	public List<ProfileImageVO> getProfileImage(String id) {
+		log.info("user profile image......... ID : " + id);
+		return userInfoRepository.getProfileImage(id);
 	}
 }

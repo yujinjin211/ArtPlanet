@@ -61,10 +61,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -75,8 +75,8 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="../../review/news">뉴스레터</a>
-                        <a href="../../review/review">리뷰</a>
+                        <a href="../review/news">뉴스레터</a>
+                        <a href="../review/review">리뷰</a>
                     </div>
                 </li>
 				<!--  

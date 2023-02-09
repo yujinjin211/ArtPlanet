@@ -10,10 +10,13 @@ import com.artplanet.myapp.model.ExhCriteria;
 import com.artplanet.myapp.model.Exhibition_InfoVO;
 import com.artplanet.myapp.model.JoinExhibitionThemeVO;
 import com.artplanet.myapp.model.JoinExhibitionVO;
+import com.artplanet.myapp.model.LikeListCriteria;
 import com.artplanet.myapp.model.PageDTO;
 import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.ThumbnailVO;
+import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.WordCloudVO;
 
 public interface IExhibitionService {
 	
@@ -36,8 +39,18 @@ public interface IExhibitionService {
 	public List<ThemeVO> getThemeList(); //테마 리스트 읽어오기
 	
 	public List<JoinExhibitionVO> getMainList(); //일정 개수의 최신 전시 정보 읽어오기
+	public List<JoinExhibitionVO> getLikeCount4(); //좋아요 수 상위 4개 전시 정보 읽어오기
+	public List<JoinExhibitionVO> getLikeCount4withID(String id); //좋아요 수 상위 4개 전시 정보 읽어오기 with ID
+	public List<WordCloudVO> createWordCloud(); //워드클라우드용 테마 데이터 읽어오기
+	public List<JoinExhibitionThemeVO> getKeywordWithPaging(@Param("cri") TrendCriteria cri, @Param("theme_name_kor") String theme_name_kor);
+	public List<JoinExhibitionThemeVO> getKeywordWithPagingID(@Param("cri") TrendCriteria cri, @Param("theme_name_kor") String theme_name_kor, @Param("id") String id);
+	public int getTotalCount(TrendCriteria cri); //트렌드 총 전시 정보 수
 	
 	public List<UserLikeExhVO> getLikeExh(String id); //회원의 좋아요 리스트 읽어오기
 	public void insertHeart(@Param("exhibition_no") int exhibition_no, @Param("id") String id); //좋아요 on
 	public void deleteHeart(@Param("exhibition_no") int exhibition_no, @Param("id") String id); //좋아요 off
+	public void upLikeCount(int exhibition_no); //해당 전시 좋아요 카운트 up
+	public void downLikeCount(int exhibition_no); //해당 전시 좋아요 카운트 down
+	public int getTotalCount(LikeListCriteria cri); //마이페이지-관심 전시 목록 총 전시 정보 수
+	public List<JoinExhibitionVO> getLikeListWithPagingID(@Param("cri") LikeListCriteria cri, @Param("id") String id); //페이징 처리 된 조인 전시 정보 읽어오기
 }

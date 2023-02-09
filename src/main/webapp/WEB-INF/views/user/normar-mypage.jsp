@@ -19,7 +19,7 @@
 <body>
     <header>
         <div>
-            <a class="logo-text" href="index">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">
@@ -32,23 +32,23 @@
 
                 <c:if test="${user == null }">
                 <div class="top-menu">
-                    <a href="ap/login">로그인</a>
+                    <a href="../user/login">로그인</a>
                 </div>
                 </c:if>
                 
                 <c:if test="${user != null }">
                 <c:if test="${user.userType eq 'normar'}">
                 <div class="top-menu">
-                    <a href="ap/normar-mypage">마이페이지</a>
+                    <a href="../user/normar-mypage">마이페이지</a>
                 </div>
                 </c:if>
                 <c:if test="${user.userType eq 'manager'}">
                 <div class="top-menu">
-                    <a href="ap/manager-mypage">마이페이지</a>
+                    <a href="../user/manager-mypage">마이페이지</a>
                 </div>
                 </c:if>
                 <div class="top-menu">
-                	<a href="logout.jsp">로그아웃</a>
+                	<a href="../user/logout">로그아웃</a>
                 </div>
                 <div class="top-menu">
                     <a><b></b>${user.nickName}님</a>
@@ -60,10 +60,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -74,8 +74,8 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="news.jsp">뉴스레터</a>
-                        <a href="review.jsp">리뷰</a>
+                        <a href="../review/news">뉴스레터</a>
+                        <a href="../review/review">리뷰</a>
                     </div>
                 </li>
 				<!--
@@ -91,27 +91,33 @@
         <div class="sidebar" style="float: left; width: 200px;">
             <a class="active accordion">관심 목록</a>
                 <div class="panel">
-                    <a href="exhibition-list.jsp">관심 전시 목록</a>
+                    <a href="../mypage/like-exhibition-list">관심 전시 목록</a>
                     <a href="exhibition-place-list.jsp">관심 전시 장소 목록</a>
                 </div>
-            <a href="visit-exhibition.jsp">다녀온 전시 목록</a>
+            <a href="../mypage/visit-exhibition-list">다녀온 전시 목록</a>
             <a href="#">나의 리뷰</a>
+            <!--  
             <a class="active accordion">마이 아트샵</a>
                 <div class="panel">
                     <a href="#">주문 내역</a>
                     <a href="#">상품 후기</a>
                 </div>
+            -->
             <a href="./userConfirm">개인정보 수정</a>
-          
         </div>
     
         <!-- 마이페이지 기본화면 상단-프로필 영역 -->
         <div class="content" >
             <div style="height: 250px;">
-                <img src="/resource/images/default-profile.jpg" class="profile-image">
+            	<c:if test="${profileImage == null }">
+	                <img src="resource/images/default-profile.jpg" class="profile-image">
+                </c:if>
+                <c:forEach var="profile" items="${profileImage }">
+	            	<img src="/ProfileImage?fileName=${profile.uuid}-${profile.fileName}" class="profile-image">
+	            </c:forEach>
                 <form style="overflow: hidden; padding-left: 20px;">
                     <a style="font-size: 24px;">${user.nickName}님</a>
-                    <a href="editProfile-pwCheck.jsp?id=" style="font-size: 18px;"><i class="fa-solid fa-pen"></i></a>
+                    <a href="./userConfirm" style="font-size: 18px;"><i class="fa-solid fa-pen"></i></a>
                 </form>
             </div>
         </div>

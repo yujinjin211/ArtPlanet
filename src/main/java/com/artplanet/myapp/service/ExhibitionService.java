@@ -14,10 +14,13 @@ import com.artplanet.myapp.model.ExhCriteria;
 import com.artplanet.myapp.model.Exhibition_InfoVO;
 import com.artplanet.myapp.model.JoinExhibitionThemeVO;
 import com.artplanet.myapp.model.JoinExhibitionVO;
+import com.artplanet.myapp.model.LikeListCriteria;
 import com.artplanet.myapp.model.PageDTO;
 import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.ThumbnailVO;
+import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.WordCloudVO;
 
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -120,6 +123,42 @@ public class ExhibitionService implements IExhibitionService {
 	}
 	
 	@Override
+	public List<JoinExhibitionVO> getLikeCount4() {
+		log.info("getLikeCount4.........");
+		return exhibitionInfoRepository.getLikeCount4();
+	}
+	
+	@Override
+	public List<JoinExhibitionVO> getLikeCount4withID(String id) {
+		log.info("getLikeCount4 with ID : " + id);
+		return exhibitionInfoRepository.getLikeCount4withID(id);
+	}
+	
+	@Override
+	public List<WordCloudVO> createWordCloud() {
+		log.info("create word cloud.........");
+		return exhibitionInfoRepository.createWordCloud();
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getKeywordWithPaging(TrendCriteria cri, String theme_name_kor) {
+		log.info("getKeywordWithPaging.........cri : " + cri + ", theme_name_kor : " + theme_name_kor);
+		return exhibitionInfoRepository.getKeywordWithPaging(cri, theme_name_kor);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getKeywordWithPagingID(TrendCriteria cri, String theme_name_kor, String id) {
+		log.info("getKeywordWithPagingID.........ID : " + id + ", cri : " + cri + ", theme_name_kor : " + theme_name_kor);
+		return exhibitionInfoRepository.getKeywordWithPagingID(cri, theme_name_kor, id);
+	}
+	
+	@Override
+	public int getTotalCount(TrendCriteria cri) {
+		log.info("cri : " + cri);
+		return exhibitionInfoRepository.getTotalCount(cri);
+	}
+	
+	@Override
 	public List<UserLikeExhVO> getLikeExh(String id) {
 		log.info("getLikeExh.........");
 		return exhibitionInfoRepository.getLikeExh(id);
@@ -129,11 +168,37 @@ public class ExhibitionService implements IExhibitionService {
 	public void insertHeart(int exhibition_no, String id) {
 		log.info("insertHeart.........");
 		exhibitionInfoRepository.insertHeart(exhibition_no, id);
+		exhibitionInfoRepository.upLikeCount(exhibition_no);
 	}
 	
 	@Override
 	public void deleteHeart(int exhibition_no, String id) {
 		log.info("deleteHeart.........");
 		exhibitionInfoRepository.deleteHeart(exhibition_no, id);
+		exhibitionInfoRepository.downLikeCount(exhibition_no);
+	}
+	
+	@Override
+	public void upLikeCount(int exhibition_no) {
+		log.info("Up Like count.........");
+		exhibitionInfoRepository.upLikeCount(exhibition_no);
+	}
+	
+	@Override
+	public void downLikeCount(int exhibition_no) {
+		log.info("Down Like count.........");
+		exhibitionInfoRepository.downLikeCount(exhibition_no);
+	}
+	
+	@Override
+	public int getTotalCount(LikeListCriteria cri) {
+		log.info("cri : " + cri);
+		return exhibitionInfoRepository.getTotalCount(cri);
+	}
+	
+	@Override
+	public List<JoinExhibitionVO> getLikeListWithPagingID(LikeListCriteria cri, String id) {
+		log.info("getLikeListWithPagingID......ID : " + id + ", cri : " + cri);
+		return exhibitionInfoRepository.getLikeListWithPagingID(cri, id);
 	}
 }

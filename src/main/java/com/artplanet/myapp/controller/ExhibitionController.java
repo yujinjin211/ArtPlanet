@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.artplanet.myapp.model.Artist_InfoVO;
 import com.artplanet.myapp.model.ExhCriteria;
 import com.artplanet.myapp.model.ExhibitionImageVO;
+import com.artplanet.myapp.model.ExhibitionThemeVO;
 import com.artplanet.myapp.model.Exhibition_InfoVO;
 import com.artplanet.myapp.model.JoinExhibitionThemeVO;
 import com.artplanet.myapp.model.JoinExhibitionVO;
@@ -29,8 +30,10 @@ import com.artplanet.myapp.model.Place_InfoVO;
 import com.artplanet.myapp.model.ReviewImageVO;
 import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.ThumbnailVO;
+import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserInfoVO;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.WordCloudVO;
 import com.artplanet.myapp.service.IArtistInfoService;
 import com.artplanet.myapp.service.IExhImageService;
 import com.artplanet.myapp.service.IExhibitionService;
@@ -121,6 +124,39 @@ public class ExhibitionController {
 		}
 	}
 	
+	//트렌드별 전시정보 목록 조회
+	@GetMapping("/trend-exhibition")
+	public void trendExhibition(TrendCriteria cri, String theme_name_kor, Model model, HttpSession session) {
+		int total = exhibitionService.getTotalCount(cri);
+		log.info("total : " + total);
+		
+		PageDTO pageMaker = new PageDTO(cri, total);
+		log.info("pageMaker : " + pageMaker );
+		model.addAttribute("pageMaker", pageMaker);
+		model.addAttribute("likeList", exhibitionService.getLikeCount4());
+		
+		theme_name_kor = "회화";
+		
+		//비회원일때
+		if(session.getAttribute("user") == null) {
+			List<JoinExhibitionVO> likeList = exhibitionService.getLikeCount4();
+			model.addAttribute("likeList", likeList);
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPaging(cri, theme_name_kor);
+			log.info(exhList);
+			model.addAttribute("exhList", exhList);
+		} else { //회원일때
+			UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+			log.info("user info : " + userInfo.getId());
+			List<JoinExhibitionVO> likeList = exhibitionService.getLikeCount4withID(userInfo.getId());
+			model.addAttribute("likeList", likeList);
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPagingID(cri, theme_name_kor, userInfo.getId());
+			log.info(exhList);
+			model.addAttribute("exhList", exhList);
+		}
+		List<WordCloudVO> jsonList = exhibitionService.createWordCloud();
+		model.addAttribute("jsonList", jsonList);
+	}
+	
 	//전시 상세 조회
 	@GetMapping("/exhibition-detail")
 	public void detailExhibition(int exhibition_no, Model model) {
@@ -192,6 +228,22 @@ public class ExhibitionController {
 			String id = userInfo.getId();
 			log.info("user info : " + id);
 			return new ResponseEntity<>(exhibitionService.getThemeWithPagingID(cri, theme_no, id), HttpStatus.OK);
+		}
+	}
+	
+	@PostMapping(value = "/KeyWordExhibition")
+	@ResponseBody
+	public ResponseEntity<List<JoinExhibitionThemeVO>> getKeywordExhibitionList(TrendCriteria cri, String theme_name_kor, HttpSession session) {
+		log.info("theme_name_kor : " + theme_name_kor);
+		
+		//비회원일때
+		if(session.getAttribute("user") == null) {
+			return new ResponseEntity<>(exhibitionService.getKeywordWithPaging(cri, theme_name_kor), HttpStatus.OK);
+		} else { //회원일때
+			UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+			String id = userInfo.getId();
+			log.info("user info : " + id);
+			return new ResponseEntity<>(exhibitionService.getKeywordWithPagingID(cri, theme_name_kor, id), HttpStatus.OK);
 		}
 	}
 	

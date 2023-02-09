@@ -345,6 +345,35 @@ public class UploadController {
 		return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
 	}
 	
+	@GetMapping("/ProfileImage")
+	@ResponseBody
+	public ResponseEntity<Resource> getProfileImage(@Param("fileName") String fileName) {
+		
+		log.info("fileName : " + fileName);
+		
+		String path = "C:\\upload\\profile\\" ; //파일의 공통 경로
+		
+		//C:\\upload\\exhibition\\fileName
+		Resource resource = new FileSystemResource(path + fileName);
+		
+		if(!resource.exists()) {
+			return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+		}
+		
+		HttpHeaders header = new HttpHeaders();
+		Path filePath = null;
+		
+		try {
+			filePath = Paths.get(path + fileName);
+			
+			header.add("Content-Type", Files.probeContentType(filePath));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+	}
+	
 	@PostMapping("/deleteFile")
 	@ResponseBody
 	public ResponseEntity<String> deleteFile(String fileName, String type) {

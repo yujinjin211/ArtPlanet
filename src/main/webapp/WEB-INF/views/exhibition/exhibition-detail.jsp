@@ -94,7 +94,7 @@
             <div class="thumbnail-area">
             </div>
             <div class="poster-box-bottom">
-                <a><i class="fa-regular fa-heart" style="font-size: 28px;"></i></a>
+                <a><i class="fa-regular fa-heart" style="font-size: 28px;"></i></a>${detail.likeCount }
                 <a><i class="fa-solid fa-share-nodes" style="font-size: 28px;"></i></a>  
                 <a href="#" class="aBtn">작품 해설 보기</a>
             </div>

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.artplanet.myapp.model.ExhCriteria;
 import com.artplanet.myapp.model.JoinExhibitionThemeVO;
+import com.artplanet.myapp.model.ProfileImageVO;
 import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.UserInfoVO;
 import com.artplanet.myapp.model.UserThemeVO;
@@ -119,8 +120,12 @@ public class UserController {
 	
 	//마이페이지 이동
 	//일반회원
-	@RequestMapping(value = "/normar-mypage")
-	public String normarMypage() {
+	@GetMapping(value = "/normar-mypage")
+	public String normarMypage(Model model, HttpSession session) {
+		UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+		List<ProfileImageVO> profileImage = userInfoService.getProfileImage(userInfo.getId());
+		model.addAttribute("profileImage", profileImage);
+		
 		return "user/normar-mypage";
 	}
 	//운영자회원

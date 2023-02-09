@@ -16,7 +16,7 @@
 <body>
     <header>
         <div>
-            <a class="logo-text" href="index.jsp">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">

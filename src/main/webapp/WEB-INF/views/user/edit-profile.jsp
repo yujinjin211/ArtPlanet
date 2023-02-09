@@ -65,10 +65,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -96,18 +96,19 @@
         <div class="sidebar" style="float: left; width: 200px;">
             <a class="active accordion">관심 목록</a>
                 <div class="panel">
-                    <a href="exhibition-list.jsp">관심 전시 목록</a>
+                    <a href="../mypage/like-exhibition-list">관심 전시 목록</a>
                     <a href="exhibition-place-list.jsp">관심 전시 장소 목록</a>
                 </div>
-            <a href="visit-exhibition.jsp">다녀온 전시 목록</a>
+            <a href="../mypage/visit-exhibition-list">다녀온 전시 목록</a>
             <a href="#">나의 리뷰</a>
+            <!--  
             <a class="active accordion">마이 아트샵</a>
                 <div class="panel">
                     <a href="#">주문 내역</a>
                     <a href="#">상품 후기</a>
                 </div>
-            <a href="../user/userCheck">개인정보 수정</a>
-          
+            -->
+            <a href="../user/userConfirm">개인정보 수정</a>
         </div>
         
         <div>

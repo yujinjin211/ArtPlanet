@@ -42,4 +42,8 @@
 		select * from user_info where id=#{id} and password=#{password}
 	</select>
 	
+	<select id="getProfileImage" resultType="com.artplanet.myapp.model.ProfileImageVO">
+		select * from user_file_info where id = #{id}
+	</select>	
+	
 </mapper>

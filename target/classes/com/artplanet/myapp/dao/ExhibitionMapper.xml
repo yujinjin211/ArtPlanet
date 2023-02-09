@@ -274,6 +274,123 @@
 		]]>
 	</select>
 	
+	<select id="getLikeCount4" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+							e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid
+                    
+					from 	exhibition_info e, artist_info a, place_info p, thumbnail_file_info t
+					
+					where 	endYn like 'n' 
+		                    and a.artist_no = e.artist_no 
+		                    AND p.place_no = e.place_no 
+		                    AND t.exhibition_no = e.exhibition_no
+					order by e.likeCount DESC
+			)
+			where rownum <= 4
+		]]>
+	</select>
+		
+	<select id="getLikeCount4withID" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+							e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userExhibitionNo",
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as "userId",
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userLikeNo"
+                    
+					from 	exhibition_info e, artist_info a, place_info p, thumbnail_file_info t
+					
+					where 	endYn like 'n' 
+		                    and a.artist_no = e.artist_no 
+		                    AND p.place_no = e.place_no 
+		                    AND t.exhibition_no = e.exhibition_no
+					order by e.likeCount DESC
+			)
+			where rownum <= 4
+		]]>
+	</select>
+	
+	<select id="createWordCloud" resultType="com.artplanet.myapp.model.WordCloudVO">
+		select t.theme_name_kor, count(t.theme_name_kor) as count
+		from exhibition_theme et, theme t
+		where t.theme_no = et.theme_no
+		group by t.theme_name_kor
+	</select>
+	
+	<select id="getKeywordWithPaging" resultMap="JoinExhibitionThemeVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+					rownum rn, e.exhibition_no, e.title, e.price, e.realm, e.startDate, e.endDate, e.likeCount, e.endYn, a.artist_name, p.place, p.sido, t.fileName, t.filepath, t.uuid, th.theme_no, th.theme_name, th.theme_name_kor, et.exhibition_no as themeExhibition_no
+					from exhibition_info e, artist_info a, place_info p, thumbnail_file_info t, theme th, exhibition_theme et
+					where rownum <= #{cri.pageNum} * #{cri.amount} and a.artist_no = e.artist_no 
+                            AND p.place_no = e.place_no 
+                            AND t.exhibition_no = e.exhibition_no 
+                            AND th.theme_no = et.theme_no
+                            AND et.exhibition_no = e.exhibition_no
+						    AND th.theme_name_kor = #{theme_name_kor}
+					order by e.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getKeywordWithPagingID" resultMap="JoinExhibitionThemeVO">
+		<![CDATA[
+			select *
+			from (
+					select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+							rownum rn, e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid, th.theme_no, th.theme_name, th.theme_name_kor, et.exhibition_no as themeExhibition_no,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as userExhibitionNo,
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as userId,
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as userLikeNo
+                    
+					from 	exhibition_info e, artist_info a, place_info p, thumbnail_file_info t, theme th, exhibition_theme et
+					
+					where 	rownum <= #{cri.pageNum} * #{cri.amount}
+							and endYn like 'n' 
+		                    and a.artist_no = e.artist_no 
+		                    AND p.place_no = e.place_no 
+		                    AND t.exhibition_no = e.exhibition_no
+                            AND th.theme_no = et.theme_no
+                            AND et.exhibition_no = e.exhibition_no
+						    AND th.theme_name_kor = #{theme_name_kor}
+					order by e.startDate DESC
+			)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
 	<select id="getTotalCount" resultType="int">
 		<![CDATA[
 			select count(*) from exhibition_info where exhibition_no > 0 and endYn like 'n'
@@ -292,6 +409,51 @@
 	
 	<delete id="deleteHeart">
 		delete from user_like_exhibition where exhibition_no = #{exhibition_no} and id = #{id}
-		</delete>
+	</delete>
+	
+	<update id="upLikeCount">
+		update exhibition_info
+		   set likeCount = likeCount + 1
+		 where exhibition_no = #{exhibition_no}
+	</update>
+	
+	<update id="downLikeCount">
+		update exhibition_info
+		   set likeCount = likeCount - 1
+		 where exhibition_no = #{exhibition_no}
+	</update>
+	
+	<select id="getLikeListWithPagingID" resultMap="JoinExhibitionVO">
+		<![CDATA[
+			select *
+	        from (
+	                select /*+INDEX_DESC(exhibition_Info pk_exhibition_info)*/
+	                        rownum rn, e.exhibition_no, e.title, 
+	                        e.price, e.realm, e.startDate, 
+	                        e.endDate, e.likeCount, e.endYn, 
+	                        a.artist_name, p.place, p.sido, t.fileName, 
+	                        t.filepath, t.uuid,
+	                        NVL((select u.exhibition_no
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userExhibitionNo",
+						    NVL((select u.id
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 'N') as "userId",
+						    NVL((select u.likeNo
+						           from user_like_exhibition u
+						          where u.exhibition_no = e.exhibition_no and u.id = #{id}), 0) as "userLikeNo"
+						          
+	                from exhibition_info e, artist_info a, place_info p, thumbnail_file_info t
+	                
+	                where rownum <= #{cri.pageNum} * #{cri.amount}
+	                        and endYn like 'n' 
+	                        and a.artist_no = e.artist_no 
+	                        AND p.place_no = e.place_no 
+	                        AND t.exhibition_no = e.exhibition_no
+	                order by e.startDate DESC
+	            )
+			where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
 	
 </mapper>

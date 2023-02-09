@@ -2,6 +2,7 @@ package com.artplanet.myapp.dao;
 
 import java.util.List;
 
+import com.artplanet.myapp.model.ProfileImageVO;
 import com.artplanet.myapp.model.UserInfoVO;
 
 public interface IUserInfoRepository {
@@ -13,4 +14,5 @@ public interface IUserInfoRepository {
 	public void withdrawUser(String id); //회원탈퇴
 	public UserInfoVO loginCheck(UserInfoVO user); //로그인
 	public UserInfoVO userCheck(UserInfoVO user); //회원 정보 확인
+	public List<ProfileImageVO> getProfileImage(String id); //id로 프로필 이미지 읽어오기
 }

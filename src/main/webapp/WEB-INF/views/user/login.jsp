@@ -19,7 +19,7 @@
 <body>
     <header>
         <div>
-            <a class="logo-text" href="/index">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">
@@ -50,10 +50,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
