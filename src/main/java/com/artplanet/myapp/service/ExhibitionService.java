@@ -273,7 +273,7 @@ public class ExhibitionService implements IExhibitionService {
 	@Override
 	public List<JoinExhibitionThemeVO> getExhibitionMypage(String[] exhibition_no_arr) {
 		log.info("getExhibitionMyPage........." + exhibition_no_arr.toString());
-		return exhibitionInfoRepository.getExhibitionMypage(exhibition_no_arr);
+		return exhibitionInfoRepository.getExhibitionMypage(exhibition_no_arr); 
 	}
 	
 }
