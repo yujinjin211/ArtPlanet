@@ -137,7 +137,7 @@ public class UserController {
 	} 
 	
 	@PostMapping("/exhibitionNoArr")
-	public String getExhibitionArr(String[] exhibition_no_arr, Model model) {
+	public String getExhibitionArr(String[] exhibition_no_arr, Model model) { 
 		log.info("exhibition_no_arr : " + exhibition_no_arr);
 		
 		List<JoinExhibitionThemeVO> exhList = exhibitionService.getExhibitionMypage(exhibition_no_arr);

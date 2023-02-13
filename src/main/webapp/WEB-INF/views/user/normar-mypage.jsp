@@ -255,7 +255,7 @@
 		success : function(result) {
 			console.log(result);
 			showResult(result);
-			}
+			} 
 		}); //end ajax
     });
     </script>
