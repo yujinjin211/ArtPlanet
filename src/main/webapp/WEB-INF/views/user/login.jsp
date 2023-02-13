@@ -15,6 +15,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <header>
@@ -64,7 +65,7 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="../review/news">뉴스레터</a>
+                        <a href="../notice/news">뉴스레터</a>
                         <a href="../review/review">리뷰</a>
                     </div>
                 </li>
@@ -81,15 +82,22 @@
         <form name="loginForm" class="login-form" action="../user/loginCheck" method="post">
             <h1 style="text-align: center; padding-bottom: 20px;">로그인</h1>
           <div class="login-container">
-            <label for="id"><b>ID</b></label>
-            <input type="text" placeholder="아이디 입력" name="id" required>
-      
+          	<c:choose>
+	          	<c:when test="${cookie.id.value != null}">
+	          		<label for="id"><b>ID</b></label>
+		            <input type="text" placeholder="아이디 입력" name="id" id="id" required value="${cookie.id.value }">
+	          	</c:when>
+	          	<c:otherwise>
+	          		<label for="id"><b>ID</b></label>
+		        	<input type="text" placeholder="아이디 입력" name="id" id="id" required>
+	          	</c:otherwise>
+	        </c:choose>
             <label for="password"><b>비밀번호</b></label>
             <input type="password" placeholder="비밀번호 입력" name="password" required>
               
             <input type="submit" value="로그인">
             <label style="float: right; font-size: medium;">
-              <input type="checkbox" checked="checked" name="remember">ID 기억하기
+              <input type="checkbox" ${empty cookie.id.value ? "":"checked" } id="remember">ID 기억하기
             </label>
           </div>
       
@@ -123,5 +131,41 @@
         <div style="text-align: center; color: gray;"> ©2022 Yujin. All rights
             reserved.</div>
     </footer>
+    
+    <script type="text/javascript">
+    $(document).on("change", "#remember", function() {
+    	var checked = $("#remember").is(":checked");
+
+    	if(checked == true) { //체크 상태일때
+    		var rememberId = $("#id").val();
+    		console.log("checked id : " + rememberId);
+    		//Ajax로 전송
+    		$.ajax({
+    		url : './rememberId',
+    		data : {id : rememberId},
+    		type : 'POST',
+    		dataType : 'json',
+    		success : function(result) {
+    				console.log("result : " + result);
+    			}
+    		}); //end ajax
+    	} else { //체크 해제했을 때
+    		console.log("unchecked")
+    		//Ajax로 전송
+    		$.ajax({
+    		url : './delete-rememberId',
+    		data : {id : rememberId},
+    		type : 'POST',
+    		dataType : 'json',
+    		success : function(result) {
+    				console.log("result : " + result);
+    			}
+    		}); //end ajax
+    	}
+    	
+    	
+    	
+    })
+    </script>
 </body>
 </html>

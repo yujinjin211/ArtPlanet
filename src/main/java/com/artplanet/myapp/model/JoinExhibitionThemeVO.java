@@ -12,5 +12,6 @@ public class JoinExhibitionThemeVO {
 	private ThemeVO theme;
 	private ExhibitionThemeVO exhTheme;
 	private UserLikeExhVO userLikeExh;
+	private UserVisitExhVO userVisitExh;
 
 }

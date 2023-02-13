@@ -16,6 +16,7 @@ import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.ThumbnailVO;
 import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.UserVisitExhVO;
 import com.artplanet.myapp.model.WordCloudVO;
 
 public interface IExhibitionInfoRepository {
@@ -44,6 +45,9 @@ public interface IExhibitionInfoRepository {
 	public List<WordCloudVO> createWordCloud(); //워드클라우드용 테마 데이터 읽어오기
 	public List<JoinExhibitionThemeVO> getKeywordWithPaging(@Param("cri") TrendCriteria cri, @Param("theme_name_kor") String theme_name_kor);
 	public List<JoinExhibitionThemeVO> getKeywordWithPagingID(@Param("cri") TrendCriteria cri, @Param("theme_name_kor") String theme_name_kor, @Param("id") String id);
+	public List<JoinExhibitionThemeVO> getNotKeywordWithPaging(@Param("cri") TrendCriteria cri);
+	public List<JoinExhibitionThemeVO> getNotKeywordWithPagingID(@Param("cri") TrendCriteria cri, @Param("id") String id);
+	
 	public int getTotalCount(TrendCriteria cri); //트렌드 총 전시 정보 수
 	
 	public List<UserLikeExhVO> getLikeExh(String id); //회원의 좋아요 리스트 읽어오기
@@ -53,4 +57,17 @@ public interface IExhibitionInfoRepository {
 	public void downLikeCount(int exhibition_no); //해당 전시 좋아요 카운트 down
 	public int getTotalCount(LikeListCriteria cri); //마이페이지-관심 전시 목록 총 전시 정보 수
 	public List<JoinExhibitionVO> getLikeListWithPagingID(@Param("cri") LikeListCriteria cri, @Param("id") String id); //페이징 처리 된 조인 전시 정보 읽어오기
+	
+	public List<UserVisitExhVO> getVisitExh(String id); //회원의 다녀왔어요 리스트 읽어오기
+	public void insertVisit(@Param("exhibition_no") int exhibition_no, @Param("id") String id); //다녀왔어요 on
+	public void deleteVisit(@Param("exhibition_no") int exhibition_no, @Param("id") String id); //다녀왔어요 off
+	public void upVisitCount(int exhibition_no); //해당 전시 관람객수 카운트 up
+	public void downVisitCount(int exhibition_no); //해당 전시 관람객수 카운트 down
+	
+	public List<JoinExhibitionThemeVO> getVisitWithDate(@Param("cri") TrendCriteria cri, @Param("id") String id, @Param("visitDate") String visitDate); //회원의 해당 날짜 전시 정보 읽어오기
+	public List<JoinExhibitionThemeVO> getVisitExhAllDate(@Param("cri") TrendCriteria cri, @Param("id") String id); //회원의 다녀온 전시 정보 목록 읽어오기
+	public List<JoinExhibitionThemeVO> getExhibitionDetail(int exhibition_no); //전시 상세 정보 읽어오기
+	public List<JoinExhibitionThemeVO> getExhibitionDetailWithID(@Param("exhibition_no") int exhibition_no, @Param("id") String id); //id로 전시 상세 정보 읽어오기
+
+	public List<JoinExhibitionThemeVO> getExhibitionMypage(@Param("exhibition_no_arr") String[] exhibition_no_arr);
 }

@@ -10,5 +10,6 @@ public class JoinExhibitionVO {
 	private Place_InfoVO place;
 	private ThumbnailVO thumbnail;
 	private UserLikeExhVO userLikeExh;
+	private UserVisitExhVO userVisitExh;
 
 }

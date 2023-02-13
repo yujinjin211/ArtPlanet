@@ -15,6 +15,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <header>
@@ -128,41 +129,8 @@
         
         <div class="content">
             <div class="wrapper" style="padding-top: 25px;">
-                <div class="card">
-                    <img src="/resource/images/non300-1.jpg">
-                    <div class="wrapper-container">
-                        <h3><b>전시이름</b></h3>
-                        <a>지역</a> /
-                        <a>주제</a> /
-                        <a>요금</a>
-                        <p><a>전시장소명</a></p>
-                        <p><a>2022/01/01 ~ 2022/12/31</a></p>
-                      </div>
-                </div>
-                <div class="card">
-                    <img src="/resource/images/non300-2.jpg">
-                    <div class="wrapper-container">
-                        <h3><b>전시이름</b></h3>
-                        <a>지역</a> /
-                        <a>주제</a> /
-                        <a>요금</a>
-                        <p><a>전시장소명</a></p>
-                        <p><a>2022/01/01 ~ 2022/12/31</a></p>
-                      </div>
-                </div>
-                <div class="card">
-                    <img src="/resource/images/non300-3.jpg">
-                    <div class="wrapper-container">
-                        <h3><b>전시이름</b></h3>
-                        <a>지역</a> /
-                        <a>주제</a> /
-                        <a>요금</a>
-                        <p><a>전시장소명</a></p>
-                        <p><a>2022/01/01 ~ 2022/12/31</a></p>
-                      </div>
-                </div>
+            
             </div>
-
         </div>
         
     </div>
@@ -201,6 +169,95 @@
             } 
         });
         }
+    </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+    	
+    	var exhibition_no_arr = JSON.parse(window.localStorage.getItem("exhibition_no_arr"));
+    	
+    	function showResult(arr) {
+			if(!arr || arr.length == 0) { return; }
+			
+			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+			
+			var str = "";
+			
+			for(var i = 0; i < arr.length; i++) {
+				$(arr[i]).each(function() {
+					var startDate = new Date(arr[i].exhibition.startDate);
+					var endDate = new Date(arr[i].exhibition.endDate);
+					var startFormat = startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate();
+					var endFormat = endDate.getFullYear() + "-" + endDate.getMonth() + "-" + endDate.getDate();
+				
+					str += "<div class='card'>";
+					str += "<img src='/ThumbnailDisplay?fileName=" + arr[i].thumbnail.uuid + "-" + arr[i].thumbnail.fileName + "'>";
+					str += "<div class='wrapper-container'>";
+		            
+		            <c:choose>
+        		        <c:when test="${not empty user.id }">
+		        		    <c:choose>
+				        		<c:when test="${exhibition.userLikeExh.id != user.id}">
+				        			str += "<a id='wc-a' class='regular" + ${status.count } + "'><i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+				        		</c:when>
+				        		<c:otherwise>
+				        			str += "<a id='wc-a' class='solid" + ${status.count } + "'><i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; color: red; cursor: pointer;'></i></a>";
+				        		</c:otherwise>
+		        		    </c:choose>
+        		        </c:when>
+        		        <c:otherwise>
+        		        	str += "<a id='wc-a' class='likeArea'><i class='fa-regular fa-heart' id='no" + ${status.count} + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+        		        </c:otherwise>
+		            </c:choose>
+		            
+		            str += "<p><a href='exhibition-detail?exhibition_no=" + arr[i].exhibition.exhibition_no + "' style='font-size: large; text-decoration-line: none; color: #444;'><b>" + arr[i].exhibition.title + "</b></a></p>";
+		            str += "<input type='hidden' id='exhNo" + ${status.count } + "' value='" + ${exhibition.exhibition.exhibition_no } + "'>";
+		            str += "<a>" + arr[i].place.sido + "</a> / ";
+		            str += "<a>" + arr[i].exhibition.realm + "</a> / ";
+		            str += "<a>" + arr[i].exhibition.price + "</a>";
+		            str += "<p><a>" + arr[i].artist.artist_name + "</a></p>";
+		            str += "<p><a>" + arr[i].place.place + "</a></p>";
+		            str += "<p><a>" + startFormat + " ~ " + endFormat + "</a></p>";
+		            str += "</div>";
+		                  
+		            str += "<c:if test='" + ${user != null } + "'>";
+		            str += "<div class='wrapper-container' style='text-align: center; margin-bottom: 20px; cursor: pointer;'>";
+		            
+		            <c:choose>
+	                  <c:when test="${exhibition.userVisitExh.id eq 'N'}">
+	                  	  str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.exhibition.exhibition_no } + "'>";
+					      str += "<a class='visit${status.count }'><button id='visitBtn${status.count }' class='chBtn' style='cursor: pointer;'>다녀왔어요.</button></a>";
+		              </c:when>
+		              <c:otherwise>
+		              	  str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.exhibition.exhibition_no } + "'>";
+						  str += "<a class='dvisit${status.count }'><button id='dvisitBtn${status.count }' class='chBtn' style='cursor: pointer; background-color: black; color: white;'>다녀왔어요.</button></a>";
+		              </c:otherwise>
+	              	</c:choose>
+	              	
+		            str += "</div>";
+		            str += "</c:if>";
+		            str += "</div>";
+				
+		        	$(".wrapper").html(str);
+		        	location.reload();
+				});
+			}
+			</c:forEach>
+    	}
+    	
+    	//Ajax로 전송
+		$.ajax({
+		url : './exhibitionNoArr',
+		data : {exhibition_no_arr : exhibition_no_arr},
+		type : 'POST',
+		dataType: "json",
+		traditional: true,
+		success : function(result) {
+			console.log(result);
+			showResult(result);
+			}
+		}); //end ajax
+    });
     </script>
 </body>
 </html>

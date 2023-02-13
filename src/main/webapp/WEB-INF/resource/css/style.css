@@ -127,6 +127,21 @@ header {
   padding-top: 60px;
 }
 
+.visit-content {
+  display: grid;
+  width: 1440px;
+  margin: auto;
+  padding-top: 60px;
+  grid-template-columns: auto 1200px;
+}
+
+.visit-div {
+  float: left;
+  margin: 0px;
+  width: 1200px;
+  height: max-content;
+}
+
 /* header */
 
 header ul { /*상단 nav 메뉴*/

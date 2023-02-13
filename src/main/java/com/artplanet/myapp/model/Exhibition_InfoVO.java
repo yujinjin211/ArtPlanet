@@ -18,5 +18,5 @@ public class Exhibition_InfoVO {
 	private String intro;
 	private int likeCount;
 	private String endYn;
-	
+	private int visitCount;
 }

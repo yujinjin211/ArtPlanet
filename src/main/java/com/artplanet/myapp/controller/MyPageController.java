@@ -7,13 +7,16 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.artplanet.myapp.model.ExhCriteria;
+import com.artplanet.myapp.model.JoinExhibitionThemeVO;
 import com.artplanet.myapp.model.JoinExhibitionVO;
 import com.artplanet.myapp.model.LikeListCriteria;
 import com.artplanet.myapp.model.PageDTO;
+import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserInfoVO;
 import com.artplanet.myapp.service.IArtistInfoService;
 import com.artplanet.myapp.service.IExhImageService;
@@ -57,8 +60,21 @@ public class MyPageController {
 	}
 	
 	@RequestMapping("/visit-exhibition-list")
-	public void visitExhibitionList() {
+	public void visitExhibitionList(TrendCriteria cri, Model model, HttpSession session) {
+		log.info("visit-Exhibition-List.........");
 		
+		int total = exhibitionService.getTotalCount(cri);
+		log.info("total : " + total);
+		
+		PageDTO pageMaker = new PageDTO(cri, total);
+		log.info("pageMaker : " + pageMaker );
+		model.addAttribute("pageMaker", pageMaker);
+		
+		UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+		log.info("user info : " + userInfo.getId());
+		
+		List<JoinExhibitionThemeVO> exhList = exhibitionService.getVisitExhAllDate(cri, userInfo.getId());
+		model.addAttribute("exhList", exhList);
 	}
 
 }

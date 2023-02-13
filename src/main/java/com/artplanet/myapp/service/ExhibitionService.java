@@ -20,6 +20,7 @@ import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.ThumbnailVO;
 import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.UserVisitExhVO;
 import com.artplanet.myapp.model.WordCloudVO;
 
 import lombok.AllArgsConstructor;
@@ -153,6 +154,18 @@ public class ExhibitionService implements IExhibitionService {
 	}
 	
 	@Override
+	public List<JoinExhibitionThemeVO> getNotKeywordWithPaging(TrendCriteria cri) {
+		log.info("getNotKeywordWithPaging.........cri : " + cri);
+		return exhibitionInfoRepository.getNotKeywordWithPaging(cri);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getNotKeywordWithPagingID(TrendCriteria cri, String id) {
+		log.info("getNotKeywordWithPagingID.........ID : " + id + ", cri : " + cri);
+		return exhibitionInfoRepository.getNotKeywordWithPagingID(cri, id);
+	}
+	
+	@Override
 	public int getTotalCount(TrendCriteria cri) {
 		log.info("cri : " + cri);
 		return exhibitionInfoRepository.getTotalCount(cri);
@@ -201,4 +214,66 @@ public class ExhibitionService implements IExhibitionService {
 		log.info("getLikeListWithPagingID......ID : " + id + ", cri : " + cri);
 		return exhibitionInfoRepository.getLikeListWithPagingID(cri, id);
 	}
+	
+	@Override
+	public List<UserVisitExhVO> getVisitExh(String id) {
+		return exhibitionInfoRepository.getVisitExh(id);
+	}
+	
+	@Override
+	public void insertVisit(int exhibition_no, String id) {
+		log.info("insertVisit.........");
+		exhibitionInfoRepository.insertVisit(exhibition_no, id);
+		exhibitionInfoRepository.upVisitCount(exhibition_no);
+	}
+	
+	@Override
+	public void deleteVisit(int exhibition_no, String id) {
+		log.info("deleteVisit");
+		exhibitionInfoRepository.deleteVisit(exhibition_no, id);
+		exhibitionInfoRepository.downVisitCount(exhibition_no);
+	}
+	
+	@Override
+	public void upVisitCount(int exhibition_no) {
+		log.info("upVisitCount.........");
+		exhibitionInfoRepository.upVisitCount(exhibition_no);
+	}
+	
+	@Override
+	public void downVisitCount(int exhibition_no) {
+		log.info("downVisitCount.........");
+		exhibitionInfoRepository.downVisitCount(exhibition_no);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getVisitWithDate(TrendCriteria cri, String id, String visitDate) {
+		log.info("getVisitWithDate......... ID : " + id + ", visitDate : " + visitDate);
+		return exhibitionInfoRepository.getVisitWithDate(cri, id, visitDate);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getVisitExhAllDate(TrendCriteria cri, String id) {
+		log.info("getVisitExhAllDate......... ID : " + id + ", cri : " + cri);
+		return exhibitionInfoRepository.getVisitExhAllDate(cri, id);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getExhibitionDetail(int exhibition_no) {
+		log.info("getExhibitionDetail.........exhibition_no : " + exhibition_no);
+		return exhibitionInfoRepository.getExhibitionDetail(exhibition_no);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getExhibitionDetailWithID(int exhibition_no, String id) {
+		log.info("getExhibitionDetailWithID.........ID : " + id + ", exhibition_no : " + exhibition_no);
+		return exhibitionInfoRepository.getExhibitionDetailWithID(exhibition_no, id);
+	}
+	
+	@Override
+	public List<JoinExhibitionThemeVO> getExhibitionMypage(String[] exhibition_no_arr) {
+		log.info("getExhibitionMyPage........." + exhibition_no_arr.toString());
+		return exhibitionInfoRepository.getExhibitionMypage(exhibition_no_arr);
+	}
+	
 }

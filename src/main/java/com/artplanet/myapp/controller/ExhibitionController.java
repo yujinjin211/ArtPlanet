@@ -2,6 +2,9 @@ package com.artplanet.myapp.controller;
 
 import java.util.List;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.annotations.Param;
@@ -33,6 +36,7 @@ import com.artplanet.myapp.model.ThumbnailVO;
 import com.artplanet.myapp.model.TrendCriteria;
 import com.artplanet.myapp.model.UserInfoVO;
 import com.artplanet.myapp.model.UserLikeExhVO;
+import com.artplanet.myapp.model.UserVisitExhVO;
 import com.artplanet.myapp.model.WordCloudVO;
 import com.artplanet.myapp.service.IArtistInfoService;
 import com.artplanet.myapp.service.IExhImageService;
@@ -135,22 +139,36 @@ public class ExhibitionController {
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("likeList", exhibitionService.getLikeCount4());
 		
-		theme_name_kor = "회화";
-		
 		//비회원일때
 		if(session.getAttribute("user") == null) {
 			List<JoinExhibitionVO> likeList = exhibitionService.getLikeCount4();
 			model.addAttribute("likeList", likeList);
-			List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPaging(cri, theme_name_kor);
+			if(theme_name_kor != null) {
+				log.info("theme_name_kor != null");
+				List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPaging(cri, theme_name_kor);
+				log.info(exhList);
+				model.addAttribute("exhList", exhList);
+			}
+			//비회원이고 theme_name_kor 검색 조건이 없을 때
+			log.info("theme_name_kor == null");
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getNotKeywordWithPaging(cri);
 			log.info(exhList);
 			model.addAttribute("exhList", exhList);
+			
 		} else { //회원일때
 			UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
 			log.info("user info : " + userInfo.getId());
 			List<JoinExhibitionVO> likeList = exhibitionService.getLikeCount4withID(userInfo.getId());
 			model.addAttribute("likeList", likeList);
-			List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPagingID(cri, theme_name_kor, userInfo.getId());
-			log.info(exhList);
+			if(theme_name_kor != null) {
+				log.info("theme_name_kor != null");
+				List<JoinExhibitionThemeVO> exhList = exhibitionService.getKeywordWithPagingID(cri, theme_name_kor, userInfo.getId());
+				log.info(exhList);
+				model.addAttribute("exhList", exhList);
+			}
+			//theme_name_kor 검색 조건이 없을 때
+			log.info("theme_name_kor == null");
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getNotKeywordWithPagingID(cri, userInfo.getId());
 			model.addAttribute("exhList", exhList);
 		}
 		List<WordCloudVO> jsonList = exhibitionService.createWordCloud();
@@ -159,7 +177,7 @@ public class ExhibitionController {
 	
 	//전시 상세 조회
 	@GetMapping("/exhibition-detail")
-	public void detailExhibition(int exhibition_no, Model model) {
+	public String detailExhibition(int exhibition_no, Model model, HttpSession session){
 		Exhibition_InfoVO exhibition = exhibitionService.readDetail(exhibition_no);
 		log.info("exhibition detail : " + exhibition);
 		
@@ -170,6 +188,19 @@ public class ExhibitionController {
 		model.addAttribute("detail", exhibition);
 		model.addAttribute("exhImageList", exhImageList);
 		
+		if(session.getAttribute("user") != null) {
+			UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getExhibitionDetailWithID(exhibition_no, userInfo.getId());
+			log.info("exhList : " + exhList);
+			model.addAttribute("exhList", exhList);
+			
+		} else {
+			List<JoinExhibitionThemeVO> exhList = exhibitionService.getExhibitionDetail(exhibition_no);
+			log.info("exhList : " + exhList);
+			model.addAttribute("exhList", exhList);
+		}
+		
+		return "exhibition/exhibition-detail";
 	}
 	
 	//JSON 작가 정보 읽기
@@ -231,6 +262,7 @@ public class ExhibitionController {
 		}
 	}
 	
+	//워드클라우드 키워드 선택 Ajax
 	@PostMapping(value = "/KeyWordExhibition")
 	@ResponseBody
 	public ResponseEntity<List<JoinExhibitionThemeVO>> getKeywordExhibitionList(TrendCriteria cri, String theme_name_kor, HttpSession session) {
@@ -262,6 +294,30 @@ public class ExhibitionController {
 		log.info("deleteHeart.........");
 		exhibitionService.deleteHeart(exhibition_no, id);
 		return new ResponseEntity<>(exhibitionService.getLikeExh(id), HttpStatus.OK);
+	}
+	
+	//다녀왔어요
+	@PostMapping("/insertVisit")
+	@ResponseBody
+	public ResponseEntity<List<UserVisitExhVO>> insertVisit(int exhibition_no, String id) {
+		log.info("insertVisit.........");
+		exhibitionService.insertVisit(exhibition_no, id);
+		return new ResponseEntity<>(exhibitionService.getVisitExh(id), HttpStatus.OK);
+	}
+	
+	@PostMapping("/deleteVisit")
+	@ResponseBody
+	public ResponseEntity<List<UserVisitExhVO>> deleteVisit(int exhibition_no, String id) {
+		log.info("insertVisit.........");
+		exhibitionService.deleteVisit(exhibition_no, id);
+		return new ResponseEntity<>(exhibitionService.getVisitExh(id), HttpStatus.OK);
+	}
+	
+	@PostMapping("/selectVisit")
+	@ResponseBody
+	public ResponseEntity<List<JoinExhibitionThemeVO>> selectVisit(TrendCriteria cri, String visitDate, String id) {
+		log.info("selectVisit.........");
+		return new ResponseEntity<>(exhibitionService.getVisitWithDate(cri, id, visitDate), HttpStatus.OK);
 	}
 	
 	

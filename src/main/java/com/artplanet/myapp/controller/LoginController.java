@@ -1,6 +1,8 @@
 package com.artplanet.myapp.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +32,34 @@ public class LoginController {
 		
 	//로그인
 	@PostMapping("/loginCheck")
-	public String loginCheck(UserInfoVO user, HttpServletRequest request) {
+	public String loginCheck(UserInfoVO user, HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		UserInfoVO res = userInfoService.loginCheck(user);
 		
 		if(res != null) {
 			session.setAttribute("user", res);
+			
 			return "redirect:/index";
 		} else {
 			return "redirect:/login";
 		}
+	}
+	
+	@PostMapping("rememberId")
+	public void rememberId(String id, HttpServletResponse response) {
+		log.info("cookie id : " + id);
+		
+		Cookie cookie = new Cookie("id", id);
+		response.addCookie(cookie);
+	}
+	
+	@PostMapping("delete-rememberId")
+	public void deleteRememberId(String id, HttpServletResponse response) {
+		log.info("cookie id : " + id);
+		
+		Cookie cookie = new Cookie("id", id);
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
 	}
 	
 	//로그아웃

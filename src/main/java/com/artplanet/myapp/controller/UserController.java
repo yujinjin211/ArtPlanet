@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import com.artplanet.myapp.model.ProfileImageVO;
 import com.artplanet.myapp.model.ThemeVO;
 import com.artplanet.myapp.model.UserInfoVO;
 import com.artplanet.myapp.model.UserThemeVO;
+import com.artplanet.myapp.service.IExhibitionService;
 import com.artplanet.myapp.service.IThemeService;
 import com.artplanet.myapp.service.IUserInfoService;
 
@@ -41,6 +44,9 @@ public class UserController {
 	
 	@Autowired
 	IThemeService themeService;
+	
+	@Autowired
+	IExhibitionService exhibitionService;
 	
 	//회원가입 페이지 이동
 	@RequestMapping(value = "/register")
@@ -120,14 +126,28 @@ public class UserController {
 	
 	//마이페이지 이동
 	//일반회원
-	@GetMapping(value = "/normar-mypage")
-	public String normarMypage(Model model, HttpSession session) {
+	@RequestMapping(value = "/normar-mypage")
+	public void normarMypage(Model model, HttpSession session) {
+		log.info("normar-mypage.........");
+		
 		UserInfoVO userInfo = (UserInfoVO)session.getAttribute("user");
 		List<ProfileImageVO> profileImage = userInfoService.getProfileImage(userInfo.getId());
 		model.addAttribute("profileImage", profileImage);
 		
+	}
+	
+	@PostMapping("/exhibitionNoArr")
+	public String getExhibitionArr(String[] exhibition_no_arr, Model model) {
+		log.info("exhibition_no_arr : " + exhibition_no_arr);
+		
+		List<JoinExhibitionThemeVO> exhList = exhibitionService.getExhibitionMypage(exhibition_no_arr);
+		model.addAttribute("exhList", exhList);
+		
+		log.info("========exhList : " + exhList);
+		
 		return "user/normar-mypage";
 	}
+	
 	//운영자회원
 	@RequestMapping(value = "/manager-mypage")
 	public String managerMypage() {

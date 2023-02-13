@@ -92,8 +92,8 @@
 
     <!-- 사이드바 -->
     
-    <div class="main-content" style="height: 1500px;">
-        <div class="sidebar" style="float: left; width: 200px;">
+    <div class="visit-content">
+        <div class="sidebar" style="float: left; width: 200px; height: auto;">
             <a class="active accordion">관심 목록</a>
                 <div class="panel">
                     <a href="../mypage/like-exhibition-list">관심 전시 목록</a>
@@ -110,17 +110,13 @@
             -->
             <a href="../user/userConfirm">개인정보 수정</a>
         </div>
-    
-        <!-- 본문 상단 -->
-        
-        <div class="content">
-            <a style="font-size: 48px; font-weight: bold;">다녀온 전시</a>
-            <hr style="overflow: hidden; border: solid 5px black;">
-        </div>
 
         <!-- 캘린더 -->
-        <div class="content" style="padding-top: 50px; padding-bottom: 50px;">
-            <div class="sec_cal">
+        <div class="visit-div" style="padding-top: 20px; padding-bottom: 50px;">
+	        <a style="font-size: 48px; font-weight: bold;">다녀온 전시</a>
+	        <hr style="overflow: hidden; border: solid 5px black;">
+            
+            <div class="sec_cal" style="padding-bottom: 30px;">
                 <div class="cal_nav">
                   <a href="javascript:;" class="nav-btn go-prev">prev</a>
                   <div class="year-month"></div>
@@ -136,46 +132,17 @@
                     <div class="day">토</div>
                     <div class="day">일</div>
                   </div>
-                  <div class="dates"></div>
+                  <div class="dates">
+                  </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- 캘린더에서 날짜를 클릭하면 나올 내용 -->
-        
-        <div class="content">
-            <div style="padding: 20px; display: flex;">
-                <img src="/resource/images/non300-1.jpg">
-                <div style="padding-left: 30px;">
-                    <a id="wc-a">
-                        <i class="fa-regular fa-heart" style="font-size: x-large;"></i>
-                    </a>
-                    <h3><b>전시이름</b></h3>
-                    <p><a>지역</a></p>
-                    <p><a>주제</a></p>
-                    <p><a>요금</a></p>
-                    <p><a>전시장소명</a></p>
-                    <p><a>2022/01/01 ~ 2022/12/31</a></p>
-                </div>   
-            </div>
-
-            <div style="padding: 20px; display: flex;">
-                <img src="/resource/images/non300-1.jpg">
-                <div style="padding-left: 30px;">
-                    <a id="wc-a">
-                        <i class="fa-regular fa-heart" style="font-size: x-large;"></i>
-                    </a>
-                    <h3><b>전시이름</b></h3>
-                    <p><a>지역</a></p>
-                    <p><a>주제</a></p>
-                    <p><a>요금</a></p>
-                    <p><a>전시장소명</a></p>
-                    <p><a>2022/01/01 ~ 2022/12/31</a></p>
-                </div>   
+            
+            <!-- 캘린더에서 날짜를 클릭하면 나올 내용 -->
+            <div class="thisArea">
             </div>
         </div>
     </div>
-    
+
     <footer class="footer-area">
         <div>
             <ul>
@@ -196,6 +163,160 @@
     </footer>
 
     <script src="/resource/js/calendar.js"></script>
+    
+    <script type="text/javascript">
+    function dateClick(e) {
+    	var dateId = e.id;
+    	var arr1 = dateId.split("date");
+    	var date = arr1[1];
+    	
+    	var year_month = $(".year-month").text();
+    	var arr2 = year_month.split(".");
+    	var year = arr2[0];
+    	var month = arr2[1];
+    	
+    	var year_month_date = arr2[0] + "-" + arr2[1] + "-" + arr1[1];
+    	console.log(year_month_date);
+    	
+    	var id = '<c:out value="${user.id}" />';
+    	
+    	function selectVisit(arr) {
+    		if(!arr || arr.length == 0) { return; }
+			
+			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+			var str = "";
+			
+			for(var i = 0; i < arr.length; i++) {
+				$(arr[i]).each(function() {
+					var startDate = new Date(arr[i].exhibition.startDate);
+					var endDate = new Date(arr[i].exhibition.endDate);
+					var startFormat = startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate();
+					var endFormat = endDate.getFullYear() + "-" + endDate.getMonth() + "-" + endDate.getDate();
+					
+					str += "<div style='padding: 20px; display: flex;'>";
+					str += "<div class='card-row' style='width: 60%'>";
+					str += "<img src='/ThumbnailDisplay?fileName=" + arr[i].thumbnail.uuid + "-" + arr[i].thumbnail.fileName + "'>";
+					str += "<div class='wrapper-container'>";
+                        <c:choose>
+                		<c:when test="${not empty user.id }"> <!-- 로그인 상태일때 --> 
+                			<c:choose>
+                				<c:when test="${exhibition.userLikeExh.id eq 'N'}">
+                					str += "<a id='wc-a' class='regular" + ${status.count } + "'><i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+                				</c:when>
+                				<c:otherwise>
+                					str += "<a id='wc-a' class='solid" + ${status.count } + "'><i class='fa-solid fa-heart' id='sheart${status.count }' style='font-size: x-large; color: red; cursor: pointer;'></i></a>";
+	                			</c:otherwise>
+                			</c:choose>
+                		</c:when>
+	                    <c:otherwise> <!-- 로그인 상태가 아닐때 -->
+	                    	str += "<a id='wc-a' class='likeArea'><i class='fa-regular fa-heart' id='no" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>a</a>";
+	                    </c:otherwise>
+	                	</c:choose>
+	                	str += "<p><a href='exhibition-detail?exhibition_no=" + arr[i].exhibition.exhibition_no + "' style='font-size: large; text-decoration-line: none; color: #444;'><b>" + arr[i].exhibition.title + "</b></a></p>";
+	                	str += "<input type='hidden' id='exhNo" + ${status.count } + "' value='" + arr[i].exhibition.exhibition_no + "'>";
+	                	str += "<a>" + arr[i].place.sido + "</a> /";
+	                	str += "<a>" + arr[i].exhibition.realm + "</a> /";
+	                	str += "<a>" + arr[i].exhibition.price + "</a>";
+	                	str += "<p><a>" + arr[i].artist.artist_name + "</a></p>";
+	                	str += "<p><a>" + arr[i].place.place + "</a></p>";
+	                	str += "<p><a>" + startFormat + " ~ " + endFormat + "</a></p>";
+	                	
+	                	str += "<c:if test='" + ${user != null } + "'>";
+	                  	str += "<div class='wrapper-container' style='text-align: center; margin-bottom: 20px;'>";
+		                str += "<button class='chBtn'>다녀왔어요.</button>";
+		                str += "</div>";
+		                str += "</c:if>";
+	                  	str += "</div>";
+	                  	str += "</div>";
+	                  	str += "</div>";
+		            
+		            $(".thisArea").html(str);
+				});
+			}
+			</c:forEach>
+    	}
+    	
+    	//Ajax로 전송
+		$.ajax({
+		url : '../exhibition/selectVisit',
+		data : {visitDate : year_month_date, id : id},
+		type : 'POST',
+		dataType : 'json',
+		success : function(result) {
+				selectVisit(result);
+			}
+		}); //end ajax
+    }
+    </script>
+    
+    <script type="text/javascript">
+	//빈 하트 클릭했을 때(insert)
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+		$(document).on("click", "#heart${status.count}", function() {
+			var exhibition_no = $("#exhNo${status.count}").val();
+			var id = '<c:out value="${user.id}" />';
+			
+			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+			
+			function insertHeart(arr) {
+				if(!arr || arr.length == 0) { return; }
+				
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+					var str = "<i class='fa-solid fa-heart' id='sheart" + ${status.count } + "' style='font-size: x-large; color: red; cursor: pointer;'></i>";
+					$(".regular${status.count}").html(str);
+					location.reload();
+				</c:forEach>
+			}
+			
+			//Ajax로 전송
+			$.ajax({
+			url : '../exhibition/insertHeart',
+			data : {exhibition_no : exhibition_no, id : id},
+			type : 'POST',
+			dataType : 'json',
+			success : function(result) {
+					console.log("result : " + result);
+					insertHeart(result);
+				}
+			}); //end ajax
+		});
+	</c:forEach>
+	</script>
+	
+	<script type="text/javascript">
+	//꽉찬 하트 클릭했을 때(delete)
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+		$(document).on("click", "#sheart${status.count}", function() {
+			var exhibition_no = $("#exhNo${status.count}").val();
+			var id = '<c:out value="${user.id}" />';
+			
+			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+			
+			function deleteHeart(arr){
+				if(!arr || arr.length == 0) { return; }
+				
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+					var str = "<i class='fa-regular fa-heart' id='heart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>";
+					$(".solid${status.count}").html(str);
+					location.reload();
+				</c:forEach>
+			}
+			
+			//Ajax로 전송
+			$.ajax({
+			url : '../exhibition/deleteHeart',
+			data : {exhibition_no : exhibition_no, id : id},
+			type : 'POST',
+			dataType : 'json',
+			success : function(result) {
+					console.log("result : " + result);
+					deleteHeart(result);
+				}
+			}); //end ajax
+		});
+	</c:forEach>
+	</script>
+    
     <script>
         var acc = document.getElementsByClassName("accordion");
         var i;

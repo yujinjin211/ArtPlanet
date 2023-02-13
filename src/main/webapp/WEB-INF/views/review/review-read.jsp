@@ -90,8 +90,8 @@
     
     <!-- 게시글 작성 단계에서 첨부한 커버 이미지 영역 -->
     <div class="wide-content">
-        <div class="vertical-area">
-            <div class="coverImage">
+        <div class="vertical-area" style="height: auto;">
+            <div class="coverImage" style="width: auto; height: auto;">
             </div>
         </div>
     </div>

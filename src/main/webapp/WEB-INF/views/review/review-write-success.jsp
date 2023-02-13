@@ -20,7 +20,7 @@
 <body>
     <header>
         <div>
-            <a class="logo-text" href="../../index">A.Pla</a>
+            <a class="logo-text" href="../index">A.Pla</a>
             <div>
                 <div class="topnav">
                     <div class="search-container">
@@ -33,23 +33,23 @@
 
                 <c:if test="${user == null }">
                 <div class="top-menu">
-                    <a href="../../user/login">로그인</a>
+                    <a href="../user/login">로그인</a>
                 </div>
                 </c:if>
                 
                 <c:if test="${user != null }">
                 <c:if test="${user.userType eq 'normar'}">
                 <div class="top-menu">
-                    <a href="../../user/normar-mypage">마이페이지</a>
+                    <a href="../user/normar-mypage">마이페이지</a>
                 </div>
                 </c:if>
                 <c:if test="${user.userType eq 'manager'}">
                 <div class="top-menu">
-                    <a href="../../user/manager-mypage">마이페이지</a>
+                    <a href="../user/manager-mypage">마이페이지</a>
                 </div>
                 </c:if>
                 <div class="top-menu">
-                	<a href="../../user/logout">로그아웃</a>
+                	<a href="../user/logout">로그아웃</a>
                 </div>
                 <div class="top-menu">
                     <a><b></b>${user.nickName}님</a>

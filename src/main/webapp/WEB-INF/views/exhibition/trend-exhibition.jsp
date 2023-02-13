@@ -173,10 +173,10 @@
                 		<c:when test="${not empty user.id }"> <!-- 로그인 상태일때 -->
                 			<c:choose>
                 				<c:when test="${exhibition.userLikeExh.id eq 'N'}">
-                					<a id="wc-a" class="regular${status.count }"><i class="fa-regular fa-heart" id="eheart${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
+                					<a id="wc-a" class="eregular${status.count }"><i class="fa-regular fa-heart" id="eheart${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
                 				</c:when>
                 				<c:otherwise>
-                					<a id="wc-a" class="solid${status.count }"><i class="fa-solid fa-heart" id="esheart${status.count }" style="font-size: x-large; color: red; cursor: pointer;"></i></a>
+                					<a id="wc-a" class="esolid${status.count }"><i class="fa-solid fa-heart" id="esheart${status.count }" style="font-size: x-large; color: red; cursor: pointer;"></i></a>
 	                			</c:otherwise>
                 			</c:choose>
                 		</c:when>
@@ -185,20 +185,20 @@
 	                    </c:otherwise>
 	                	</c:choose>
 	                    <p><a href="exhibition-detail?exhibition_no=${exhibition.exhibition.exhibition_no }" style="font-size: large; text-decoration-line: none; color: #444;"><b>${exhibition.exhibition.title }</b></a></p>
-	                    <input type="hidden" id="exhNo${status.count }" value="${exhibition.exhibition.exhibition_no }">
+	                    <input type="hidden" id="eexhNo${status.count }" value="${exhibition.exhibition.exhibition_no }">
 	                    <a>${exhibition.place.sido }</a> /
 	                    <a>${exhibition.exhibition.realm }</a> /
 	                    <a>${exhibition.exhibition.price }</a>
 	                    <p><a>${exhibition.artist.artist_name }</a></p>
 	                    <p><a>${exhibition.place.place }</a></p>
 	                    <p><a><fmt:formatDate pattern="YYYY-MM-dd" value="${exhibition.exhibition.startDate }"/> ~ <fmt:formatDate pattern="YYYY-MM-dd" value="${exhibition.exhibition.endDate }"/></a></p>
-	                  </div>
 	                  
-	                  <c:if test="${user != null }">
+	                  	<c:if test="${user != null }">
 		                  <div class="wrapper-container" style="text-align: center; margin-bottom: 20px;">
 		                  	<button class="chBtn">다녀왔어요.</button>
 		                  </div>
-	                  </c:if>
+	                  	</c:if>
+	                  </div>
                     </div>
                 </c:forEach>
                 
@@ -343,9 +343,9 @@
 	
 	<script type="text/javascript">
 	//빈 하트 클릭했을 때(insert)
-	<c:forEach var="exhibition" items="${likeList}" varStatus="status">
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
 		$(document).on("click", "#eheart${status.count}", function() {
-			var exhibition_no = $("#exhNo${status.count}").val();
+			var exhibition_no = $("#eexhNo${status.count}").val();
 			var id = '<c:out value="${user.id}" />';
 			
 			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
@@ -353,9 +353,9 @@
 			function insertHeart(arr) {
 				if(!arr || arr.length == 0) { return; }
 				
-				<c:forEach var="exhibition" items="${likeList}" varStatus="status">
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
 					var str = "<i class='fa-solid fa-heart' id='esheart" + ${status.count } + "' style='font-size: x-large; color: red; cursor: pointer;'></i>";
-					$(".regular${status.count}").html(str);
+					$(".eregular${status.count}").html(str);
 					location.reload();
 				</c:forEach>
 			}
@@ -379,7 +379,7 @@
 	//꽉찬 하트 클릭했을 때(delete)
 	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
 		$(document).on("click", "#esheart${status.count}", function() {
-			var exhibition_no = $("#exhNo${status.count}").val();
+			var exhibition_no = $("#eexhNo${status.count}").val();
 			var id = '<c:out value="${user.id}" />';
 			
 			console.log("exhibition_no : " + exhibition_no + ", id : " + id);
@@ -389,7 +389,7 @@
 				
 				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
 					var str = "<i class='fa-regular fa-heart' id='eheart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i>";
-					$(".solid${status.count}").html(str);
+					$(".esolid${status.count}").html(str);
 					location.reload();
 				</c:forEach>
 			}
@@ -419,42 +419,95 @@
 		var words = [];
 		
 		<c:forEach var="json" items="${jsonList}" varStatus="status">
-		var theme_name_kor = '<c:out value="${json.theme_name_kor}" />';
-		var count = '<c:out value="${json.count}" />';
-		var size = '<c:out value="${status.count}" />';
-		words.push({text : theme_name_kor, weight : count, handlers: {
-		    click: function() {
-		        alert('You clicked the word !');
-		        
-		        $("#word-area").change(function(e) {
-		        	
-					if(!arr || arr.length == 0) { return; }
-    				
-    				var str = "";
-		        	
-		        	function showResult(arr) {
-		        		
-		        	}
-		        	
-		        });
-		        
-		      	//Ajax로 전송
-				$.ajax({
-				url : './KeyWordExhibition',
-				data : {theme_name_kor: theme_name_kor, id : id},
-				type : 'POST',
-				dataType : 'json',
-				success : function(result) {
-						console.log("result : " + result);
-						showResult(result);
-					}
-				}); //end ajax
-		      }
-		    }});
+			var theme_name_kor = '<c:out value="${json.theme_name_kor}" />';
+			var count = '<c:out value="${json.count}" />';
+			var size = '<c:out value="${status.count}" />';
+			
+			words.push({text : theme_name_kor, weight : count, html : {style : "cursor: pointer;"},
+			handlers : {
+				click : function(e) {
+					theme_name_kor = '<c:out value="${json.theme_name_kor}" />';
+					
+			        	function showResult(arr) {
+			        		
+			        		if(!arr || arr.length == 0) { return; }
+			        		
+			        		<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+			        		
+		    				var str = "";
+			        		
+			        		for(var i = 0; i < arr.length; i++) {
+			        			$(arr[i]).each(function () {
+			        				var startDate = new Date(arr[i].exhibition.startDate);
+		    						var endDate = new Date(arr[i].exhibition.endDate);
+		    						var startFormat = startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate();
+		    						var endFormat = endDate.getFullYear() + "-" + endDate.getMonth() + "-" + endDate.getDate();
+		    						
+		    						str += "<div class='card-row'>";
+		    						str += "<img src='/ThumbnailDisplay?fileName=" + arr[i].thumbnail.uuid + "-" + arr[i].thumbnail.fileName + "'>";
+		    						str += "<div class='wrapper-container'>";
+		    	                        <c:choose>
+		    	                		<c:when test="${not empty user.id }"> <!-- 로그인 상태일때 -->
+		    	                			<c:choose>
+		    	                				<c:when test="${exhibition.userLikeExh.id eq 'N'}">
+		    	                					str += "<a id='wc-a' class='eregular" + ${status.count } + "'><i class='fa-regular fa-heart' id='eheart" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+		    	                				</c:when>
+		    	                				<c:otherwise>
+		    	                					str += "<a id='wc-a' class='esolid" + ${status.count } + "'><i class='fa-solid fa-heart' id='esheart${status.count }' style='font-size: x-large; color: red; cursor: pointer;'></i></a>";
+		    		                			</c:otherwise>
+		    	                			</c:choose>
+		    	                		</c:when>
+		    		                    <c:otherwise> <!-- 로그인 상태가 아닐때 -->
+		    		                    	str += "<a id='wc-a' class='likeArea'><i class='fa-regular fa-heart' id='eno" + ${status.count } + "' style='font-size: x-large; cursor: pointer;'></i></a>";
+		    		                    </c:otherwise>
+		    		                	</c:choose>
+		    		                	str += "<p><a href='exhibition-detail?exhibition_no=" + arr[i].exhibition.exhibition_no + "' style='font-size: large; text-decoration-line: none; color: #444;'><b>" + arr[i].exhibition.title + "</b></a></p>";
+		    		                	str += "<input type='hidden' id='eexhNo" + ${status.count } + "' value='" + arr[i].exhibition.exhibition_no + "'>";
+		    		                	str += "<a>" + arr[i].place.sido + "</a> /";
+		    		                	str += "<a>" + arr[i].exhibition.realm + "</a> /";
+		    		                	str += "<a>" + arr[i].exhibition.price + "</a>";
+		    		                	str += "<p><a>" + arr[i].artist.artist_name + "</a></p>";
+		    		                	str += "<p><a>" + arr[i].place.place + "</a></p>";
+		    		                	str += "<p><a>" + startFormat + " ~ " + endFormat + "</a></p>";
+		    		                	
+		    		                	str += "<c:if test='" + ${user != null } + "'>";
+		    		                  	str += "<div class='wrapper-container' style='text-align: center; margin-bottom: 20px;'>";
+		    			                str += "<button class='chBtn'>다녀왔어요.</button>";
+		    			                str += "</div>";
+		    			                str += "</c:if>";
+		    		                  	str += "</div>";
+		    		                  	str += "</div>";
+		    		                  	
+		        		            $("#word-area").html(str);
+			        			});
+			        		}
+			        		
+			        		</c:forEach>
+			        	}
+					
+					//Ajax로 전송
+					$.ajax({
+					url : './KeyWordExhibition',
+					data : {theme_name_kor: theme_name_kor},
+					type : 'POST',
+					dataType : 'json',
+					success : function(result) {
+							showResult(result);
+						}
+					}); //end ajax
+				}
+			
+			}	
+			
+			});
+			
 		</c:forEach>
 		
 		$('#tags-cloud').jQCloud(words, {autoResize: true, fontSize : {from : 0.2, to : 0.03}});
 	});
+	</script>
+	
+	<script type="text/javascript">
 	</script>
     
     

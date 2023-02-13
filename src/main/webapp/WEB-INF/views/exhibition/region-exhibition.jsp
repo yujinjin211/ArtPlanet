@@ -162,10 +162,19 @@
                   </div>
                   
                   <c:if test="${user != null }">
-                  <div class="wrapper-container" style="text-align: center; margin-bottom: 20px;">
-                  	<button class="chBtn">다녀왔어요.</button>
-                  </div>
-                  </c:if>
+                  <div class="wrapper-container visitBtnArea${status.count }" style="text-align: center; margin-bottom: 20px;">
+	                  <c:choose>
+		                  <c:when test="${exhibition.userVisitExh.id eq 'N'}">
+						      <input type="hidden" id="VexhNo${status.count }" value="${exhibition.exhibition.exhibition_no }">
+						      <a class="visit${status.count }"><button id="visitBtn${status.count }" class="chBtn" style="cursor: pointer;">다녀왔어요.</button></a>
+			              </c:when>
+			              <c:otherwise>
+							  <input type="hidden" id="VexhNo${status.count }" value="${exhibition.exhibition.exhibition_no }">
+							  <a class="dvisit${status.count }"><button id="dvisitBtn${status.count }" class="chBtn" style="cursor: pointer; background-color: black; color: white;">다녀왔어요.</button></a>
+			              </c:otherwise>
+		              </c:choose>
+		          </div>
+	              </c:if>
             </div>
             </c:forEach>
         </div>
@@ -282,8 +291,19 @@
         		            str += "</div>";
         		                  
         		            str += "<c:if test='" + ${user != null } + "'>";
-        		            str += "<div class='wrapper-container' style='text-align: center; margin-bottom: 20px;'>";
-        		            str += "<button class='chBtn'>다녀왔어요.</button>";
+        		            str += "<div class='wrapper-container' style='text-align: center; margin-bottom: 20px; cursor: pointer;'>";
+        		            
+        		            <c:choose>
+			                  <c:when test="${exhibition.userVisitExh.id eq 'N'}">
+			                  	  str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.exhibition.exhibition_no } + "'>";
+							      str += "<a class='visit${status.count }'><button id='visitBtn${status.count }' class='chBtn' style='cursor: pointer;'>다녀왔어요.</button></a>";
+				              </c:when>
+				              <c:otherwise>
+				              	  str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.exhibition.exhibition_no } + "'>";
+								  str += "<a class='dvisit${status.count }'><button id='dvisitBtn${status.count }' class='chBtn' style='cursor: pointer; background-color: black; color: white;'>다녀왔어요.</button></a>";
+				              </c:otherwise>
+			              	</c:choose>
+			              	
         		            str += "</div>";
         		            str += "</c:if>";
         		            str += "</div>";
@@ -378,6 +398,80 @@
 		});
 	</c:forEach>
 	</script>
+	
+	<script type="text/javascript">
+	//빈 다녀왔어요 버튼 클릭했을 때
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+	$(document).on("click", "#visitBtn${status.count}", function() {
+		var exhibition_no = $("#exhNo${status.count}").val();
+		var id = '<c:out value="${user.id}" />';
+		
+		console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+		
+		function insertVisit(arr) {
+			if(!arr || arr.length == 0) { return; }
+			
+			var str = "";
+			
+			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+				str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.place.place_no } + "'>"
+				str += "<a class='dvisit" + ${status.count } + "'><button id='dvisitBtn" + ${status.count } + "' class='chBtn' style='cursor: pointer; background-color: black; color: white;'>다녀왔어요.</button></a>";
+				$(".visit${status.count}").html(str);
+				location.reload();
+			</c:forEach>
+		}
+		
+		//Ajax로 전송
+		$.ajax({
+		url : './insertVisit',
+		data : {exhibition_no : exhibition_no, id : id},
+		type : 'POST',
+		dataType : 'json',
+		success : function(result) {
+				insertVisit(result);
+			}
+		}); //end ajax
+	});
+	</c:forEach>
+	
+	</script>
     
+    
+    <script type="text/javascript">
+	//꽉찬 다녀왔어요 버튼 클릭했을 때
+	<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+	$(document).on("click", "#dvisitBtn${status.count}", function() {
+		var exhibition_no = $("#exhNo${status.count}").val();
+		var id = '<c:out value="${user.id}" />';
+		
+		console.log("exhibition_no : " + exhibition_no + ", id : " + id);
+		
+		function insertVisit(arr) {
+			if(!arr || arr.length == 0) { return; }
+			
+			var str = "";
+			
+			<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+				str += "<input type='hidden' id='VexhNo" + ${status.count } + "' value='" + ${exhibition.place.place_no } + "'>"
+				str += "<a class='visit" + ${status.count } + "'><button id='visitBtn" + ${status.count } + "' class='chBtn' style='cursor: pointer;'>다녀왔어요.</button></a>";
+				$(".dvisit${status.count}").html(str);
+				location.reload();
+			</c:forEach>
+		}
+		
+		//Ajax로 전송
+		$.ajax({
+		url : './deleteVisit',
+		data : {exhibition_no : exhibition_no, id : id},
+		type : 'POST',
+		dataType : 'json',
+		success : function(result) {
+				insertVisit(result);
+			}
+		}); //end ajax
+	});
+	</c:forEach>
+	</script>
+	
 </body>
 </html>

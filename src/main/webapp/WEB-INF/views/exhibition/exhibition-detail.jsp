@@ -62,10 +62,10 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">전시</a>
                     <div class="dropdown-content">
-                        <a href="trend-exhibition.jsp">트렌드 전시 찾기</a>
-                        <a href="region-exhibition.jsp">지역별 전시 찾기</a>
-                        <a href="theme-exhibition.jsp">주제별 전시 찾기</a>
-                        <a href="location-exhibition.jsp">현재 위치에서 전시 찾기</a>
+                        <a href="../exhibition/trend-exhibition">트렌드 전시 찾기</a>
+                        <a href="../exhibition/region-exhibition">지역별 전시 찾기</a>
+                        <a href="../exhibition/theme-exhibition">주제별 전시 찾기</a>
+                        <a href="../exhibition/location-exhibition">현재 위치에서 전시 찾기</a>
                     </div>
                 </li>
 
@@ -76,11 +76,12 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="news.jsp">뉴스레터</a>
-                        <a href="review.jsp">리뷰</a>
+                        <a href="../notice/news">뉴스레터</a>
+                        <a href="../review/review">리뷰</a>
                     </div>
                 </li>
-				<!--  
+
+                <!--  
                 <li>
                 <a href="art-shop.jsp">아트샵</a>
                 </li>
@@ -89,14 +90,32 @@
         </div>
     </header>
 
+	<c:forEach var="exhibition" items="${exhList }" varStatus="status">
     <div class="div-style">
         <div class="poster-box">
             <div class="thumbnail-area">
+            	<img src="/ThumbnailDetailDisplay?fileName=${exhibition.thumbnail.filePath}/${exhibition.thumbnail.uuid }-${exhibition.thumbnail.fileName}" style="width: 300px; height: 400px; padding-bottom: 10px;">
             </div>
             <div class="poster-box-bottom">
-                <a><i class="fa-regular fa-heart" style="font-size: 28px;"></i></a>${detail.likeCount }
-                <a><i class="fa-solid fa-share-nodes" style="font-size: 28px;"></i></a>  
-                <a href="#" class="aBtn">작품 해설 보기</a>
+                <c:choose>
+                		<c:when test="${not empty user.id }"> <!-- 로그인 상태일때 -->
+                			<c:choose>
+                				<c:when test="${exhibition.userLikeExh.id eq 'N'}">
+                					<a id="wc-a" class="regular${status.count }"><i class="fa-regular fa-heart" id="heart${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
+                				</c:when>
+                				<c:otherwise>
+                					<a id="wc-a" class="solid${status.count }"><i class="fa-solid fa-heart" id="sheart${status.count }" style="font-size: x-large; color: red; cursor: pointer;"></i></a>
+	                			</c:otherwise>
+                			</c:choose>
+                		</c:when>
+	                    <c:otherwise> <!-- 로그인 상태가 아닐때 -->
+                    		<a id="wc-a" class="likeArea"><i class="fa-regular fa-heart" id="no${status.count }" style="font-size: x-large; cursor: pointer;"></i></a>
+	                    </c:otherwise>
+                	</c:choose>
+                
+                <a id="wc-a">${exhibition.exhibition.likeCount }</a>
+                <a id="wc-a"><i class="fa-solid fa-share-nodes" style="font-size: 28px;"></i></a>  
+                <a id ="wc-a" style="float: right;" href="#" class="aBtn">작품 해설 보기</a>
             </div>
              
         </div>
@@ -105,61 +124,53 @@
               <li class="info-item">
                 <strong class="info-label">전시 이름</strong>
                 <div class="info-desc">
-                  <a>${detail.title }</a>
+                  <a>${exhibition.exhibition.title}</a>
                 </div>
               </li>
               <li class="info-item">
                 <strong class="info-label">지역</strong>
-                <div class="info-desc sido_gungu">
-                
-                </div>
+                <a>${exhibition.place.sido }</a>
               </li>
               <li class="info-item">
                 <strong class="info-label">주소</strong>
-                <div class="info-desc">
-                  <a>서울특별시 마포구 신촌로 176</a>
-                </div>
+                <a>${exhibition.place.sido } ${exhibition.place.gungu } ${exhibition.place.address }</a>
               </li>
               <li class="info-item">
                 <strong class="info-label">장소 이름</strong>
-                <div class="info-desc place">
-                  
-                </div>
+                <a>${exhibition.place.place}</a>
               </li>
               <li class="info-item">
                 <strong class="info-label">전시 일정</strong>
                 <div class="info-desc">
-                  <a><fmt:formatDate pattern="YYYY-MM-dd" value="${detail.startDate }"/> ~ <fmt:formatDate pattern="YYYY-MM-dd" value="${detail.endDate }"/> </a>
+                  <a><fmt:formatDate pattern="YYYY-MM-dd" value="${exhibition.exhibition.startDate }"/> ~ <fmt:formatDate pattern="YYYY-MM-dd" value="${exhibition.exhibition.endDate }"/> </a>
                 </div>
               </li>
               <li class="info-item">
                 <strong class="info-label">이용 시간</strong>
-                <div class="info-desc operating_hour">
-                  
-                </div>
+                <a>${exhibition.place.operating_hour }</a>
               </li>
               <li class="info-item">
                 <strong class="info-label">이용 요금</strong>
                 <div class="info-desc">
-                  <a>${detail.price }</a>
+                  <a>${exhibition.exhibition.price }</a>
                 </div>
               </li>
               <li class="info-item">
                <strong class="info-label">작가 이름</strong>
-               <div class="info-desc artist_name">
-               </div>
+               <a>${exhibition.artist.artist_name }</a>
               </li>
               <li class="info-item">
                 <strong class="info-label">홈페이지</strong>
-                <div class="info-desc url">
-                </div>
+                <a href="${exhibition.place.url }">${exhibition.place.url }</a>
               </li>
+              <!--  
               <li class="info-item">
                 <strong class="info-label">예매 안내</strong>
                 <div class="info-desc">
                   <a href="#">예매 페이지로 이동</a>
                 </div>
               </li>
+              -->
             </ul>
             
           </div>
@@ -168,10 +179,11 @@
     <div class="div-style">
         <hr style="border: solid 6px; width: 1440px; margin-bottom: 20px;">
         <a style="font-size: 50px;">"</a>
-        <a>${detail.intro}</a>
+        <a>${exhibition.exhibition.intro }</a>
         <a style="font-size: 50px">"</a>
     </div>
 
+	<c:if test="${exhImageList != null }">
     <div class="div-style" style="position: relative; box-sizing: border-box; padding-top: 50px;" >
         
         <c:forEach var="exhImage" items="${exhImageList}" varStatus="status">
@@ -189,18 +201,17 @@
           <p id="caption"></p>
         </div>
         
-      	
         <div class="row">
           <c:forEach var="exhImage" items="${exhImageList }" varStatus="status">
           <div class="column">
             <img class="demo cursor" src="/ExhibitionImage?fileName=${exhImage.uuid}-${exhImage.fileName}" style="width:100%" onclick="currentSlide(${status.count})">
           </div>
-          
           </c:forEach>
         </div>
         
       </div>
-
+      </c:if>
+	</c:forEach>
     
     <footer class="footer-area">
         <div>
@@ -221,6 +232,7 @@
             reserved.</div>
     </footer>
     
+    <!--  
     <script type="text/javascript">
     	$(document).ready(function(){
     		
@@ -236,7 +248,6 @@
     				var url = "";
     					
         				$(arr).each(function() {
-        					
         					sido_gungu += "<a>" + this.sido + " " + this.gungu + "</a>";
         					place_name += "<a>" + this.place + "</a>"
         					operating_hour += "<a>" + this.operating_hour + "</a>";
@@ -290,6 +301,7 @@
     		
     	});
     </script>
+	-->
 
     <script>
         let slideIndex = 1;
@@ -321,6 +333,77 @@
           captionText.innerHTML = dots[slideIndex-1].alt;
         }
         </script>
+        
+        <script type="text/javascript">
+		
+			$(document).ready(function(){
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+				var fileCallPath = '<c:out value="${exhibition.thumbnail.filePath}" />' + "/" + '<c:out value="${exhibition.thumbnail.uuid}" />' + "-" + '<c:out value="${exhibition.thumbnail.fileName}" />';
+				var exhibition_no = '<c:out value="${exhibition.exhibition.exhibition_no}" />';
+				var title = '<c:out value="${exhibition.exhibition.title}" />';
+				var sido = '<c:out value="${exhibition.place.sido}" />';
+				var realm = '<c:out value="${exhibition.exhibition.realm}" />';
+				var startDate = '<c:out value="${exhibition.exhibition.startDate}" />';
+				var endDate = '<c:out value="${exhibition.exhibition.endDate}" />';
+				var place = '<c:out value="${exhibition.place.place}" />';
+				var artist_name = '<c:out value="${exhibition.artist.artist_name}" />';
+				var id = '<c:out value="${user.id}" />';
+				
+// 				window.localStorage.setItem("fileCallPath", fileCallPath);
+// 				window.localStorage.setItem("exhibition_no", exhibition_no);
+// 				window.localStorage.setItem("title", title);
+// 				window.localStorage.setItem("sido", sido);
+// 				window.localStorage.setItem("realm", realm);
+// 				window.localStorage.setItem("startDate", startDate);
+// 				window.localStorage.setItem("endDate", endDate);
+// 				window.localStorage.setItem("place", place);
+// 				window.localStorage.setItem("artist_name", artist_name);
+// 				window.localStorage.setItem("id", id);
+				
+// 				console.log(window.localStorage.getItem("fileCallPath"));
+// 				console.log(window.localStorage.getItem("exhibition_no"));
+// 				console.log(window.localStorage.getItem("title"));
+// 				console.log(window.localStorage.getItem("sido"));
+// 				console.log(window.localStorage.getItem("realm"));
+// 				console.log(window.localStorage.getItem("startDate"));
+// 				console.log(window.localStorage.getItem("endDate"));
+// 				console.log(window.localStorage.getItem("place"));
+// 				console.log(window.localStorage.getItem("artist_name"));
+// 				console.log(window.localStorage.getItem("id"));
+				
+// 				var list = { 
+// 						fileCallPath : window.localStorage.getItem("fileCallPath"), 
+// 						exhibition_no : window.localStorage.getItem("exhibition_no"),
+// 						title : window.localStorage.getItem("title"), 
+// 						sido : window.localStorage.getItem("sido"), 
+// 						realm : window.localStorage.getItem("realm"), 
+// 						startDate : window.localStorage.getItem("startDate"), 
+// 						endDate : window.localStorage.getItem("endDate"), 
+// 						place : window.localStorage.getItem("place"), 
+// 						artist_name : window.localStorage.getItem("artist_name"), 
+// 						id : window.localStorage.getItem("id")
+// 						};
+				
+// 				localStorage.setItem('obj', JSON.stringify(list));
+				
+				
+				var arr = localStorage.getItem("exhibition_no_arr");
+				if( arr == null ) {
+					arr = [];
+				} else {
+					arr = JSON.parse(arr);
+				}
+				
+				arr.unshift(exhibition_no);
+				window.localStorage.setItem("exhibition_no_arr", JSON.stringify(arr));
+				
+				</c:forEach>
+				
+				
+				
+			});
+		
+		</script>
 
 </body>
 </html>
