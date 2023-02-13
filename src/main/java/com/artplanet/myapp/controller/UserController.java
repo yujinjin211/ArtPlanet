@@ -134,7 +134,7 @@ public class UserController {
 		List<ProfileImageVO> profileImage = userInfoService.getProfileImage(userInfo.getId());
 		model.addAttribute("profileImage", profileImage);
 		
-	}
+	} 
 	
 	@PostMapping("/exhibitionNoArr")
 	public String getExhibitionArr(String[] exhibition_no_arr, Model model) {
