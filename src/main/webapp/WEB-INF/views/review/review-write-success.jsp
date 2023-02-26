@@ -75,8 +75,8 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropbtn">소식·참여</a>
                     <div class="dropdown-content">
-                        <a href="../review/news">뉴스레터</a>
-                        <a href="../review/review">리뷰</a>
+                        <a href="../notice/news">뉴스레터</a>
+                        <a href="../review">리뷰</a>
                     </div>
                 </li>
 				<!--  

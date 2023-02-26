@@ -335,8 +335,14 @@
         </script>
         
         <script type="text/javascript">
-		
 			$(document).ready(function(){
+				
+				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
+				$("#no${status.count}").on("click", function(e) {
+					alert("로그인한 후 이용 가능합니다.")
+				});
+				</c:forEach>
+				
 				<c:forEach var="exhibition" items="${exhList}" varStatus="status">
 				var fileCallPath = '<c:out value="${exhibition.thumbnail.filePath}" />' + "/" + '<c:out value="${exhibition.thumbnail.uuid}" />' + "-" + '<c:out value="${exhibition.thumbnail.fileName}" />';
 				var exhibition_no = '<c:out value="${exhibition.exhibition.exhibition_no}" />';
