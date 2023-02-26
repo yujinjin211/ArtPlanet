@@ -100,7 +100,7 @@
                     <a href="exhibition-place-list.jsp">관심 전시 장소 목록</a>
                 </div>
             <a href="../mypage/visit-exhibition-list">다녀온 전시 목록</a>
-            <a href="#">나의 리뷰</a>
+            <a href="../mypage/my-review-list">나의 리뷰</a>
             <!--  
             <a class="active accordion">마이 아트샵</a>
                 <div class="panel">

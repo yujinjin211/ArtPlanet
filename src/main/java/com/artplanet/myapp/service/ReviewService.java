@@ -100,4 +100,10 @@ public class ReviewService implements IReviewService {
 		return reviewImageRepository.findByExhibitionNo(review_no);
 	}
 	
+	@Override
+	public List<ReviewVO> getReviewListWithPagingFindById(Criteria cri, String id) {
+		log.info("get review list with paging and find by Id : " + id);
+		return reviewRepository.getReviewListWithPagingFindById(cri, id);
+	}
+	
 }

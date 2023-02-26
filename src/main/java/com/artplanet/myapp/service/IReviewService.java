@@ -2,6 +2,8 @@ package com.artplanet.myapp.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.artplanet.myapp.model.Criteria;
 import com.artplanet.myapp.model.ReviewImageVO;
 import com.artplanet.myapp.model.ReviewVO;
@@ -18,5 +20,7 @@ public interface IReviewService {
 	public int updateReivew(ReviewVO review); 				//리뷰 수정
 	public void readCount(int review_no); 					//조회수 증가
 	public List<ReviewImageVO> getImageList(int review_no);	//첨부한 이미지 읽기
+	
+	public List<ReviewVO> getReviewListWithPagingFindById(@Param("cri") Criteria cri, @Param("id") String id); //페이징 처리된 특정 회원의 리뷰 목록 가져오기
 	
 }
