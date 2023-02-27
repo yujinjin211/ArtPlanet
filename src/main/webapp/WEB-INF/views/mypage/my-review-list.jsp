@@ -89,14 +89,14 @@
         </div>
     </header>
 
-    <div style="width: 1440px; margin: auto; height: 1000px; padding-top: 60px;">
-        <div class="sidebar" style="float: left; width: 200px;">
+    <div class="right-content">
+    	<!-- 사이드바 -->
+        <div class="sidebar" style="float: left; width: 200px; height: auto;">
             <a class="active accordion">관심 목록</a>
                 <div class="panel">
                     <a href="../mypage/like-exhibition-list">관심 전시 목록</a>
                     <a href="exhibition-place-list.jsp">관심 전시 장소 목록</a>
                 </div>
-            <a href="visit-exhibition.jsp">다녀온 전시 목록</a>
             <a href="../mypage/visit-exhibition-list">다녀온 전시 목록</a>
             <a href="../mypage/my-review-list">나의 리뷰</a>
             <!--  
@@ -107,24 +107,21 @@
                 </div>
             -->
             <a href="editProfile-pwCheck.jsp">개인정보 수정</a>
-          
         </div>
     
-        <div class="content" >
+        <div class="right-div" style="padding-top: 20px; padding-bottom: 50px;">
             <a style="font-size: 48px; font-weight: bold;">작성 가능한 리뷰</a>
             <hr style="overflow: hidden; border: solid 5px black;">
-        </div>
 
-        <div class="content">
             <c:forEach var="review" items="${reviewList }" varStatus="status">
             <div class="content-box" style="display: flex;">
                 <ul style="width: 80%;">
                     <li><a>작성일시 : <fmt:formatDate pattern="YYYY-MM-dd" value="${review.writeDate }"/></a></li>
-                    <li><a>제목 : ${review.review_title }</a></li>
+                    <li><a href="../review/review-read?review_no=${review.review_no }">제목 : ${review.review_title }</a></li>
                 </ul>
                 <div class="vertical-box">
-                    <input type="button" class="btn-style" value="수정">
-                    <input type="button" class="btn-style" value="삭제">
+                    <input type="button" class="btn-style" id="updateBtn${review.review_no }" value="수정">
+                    <input type="button" class="btn-style" id="deleteBtn${review.review_no }" value="삭제">
                 </div>     
             </div>
             </c:forEach>
@@ -150,7 +147,6 @@
 				<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum }">	
 				<input type="hidden" name="amount" value="${pageMaker.cri.amount }">
 			</form>
-
 		</div>
         
 	</div>
@@ -203,5 +199,36 @@
         });
         }
     </script>
+    
+    <script type="text/javascript">
+    //삭제 버튼 클릭했을 때
+    <c:forEach var="review" items="${reviewList}" varStatus="status">
+    $(document).on("click", "#deleteBtn${review.review_no}", function() {
+    	var review_no = '<c:out value="${review.review_no}" />';
+    	var id = '<c:out value="${user.id}" />';
+    	
+    	if(confirm("삭제하시겠습니까?")) {
+    		alert("삭제");
+    		console.log("Delete review_no : " + review_no);
+    		
+    		//Ajax로 전송
+    		$.ajax({
+    		url : '../review/deleteReview',
+    		data : {review_no : review_no, id : id},
+    		type : 'POST',
+    		dataType : 'json',
+    		success : function(result) {
+    			}
+    		}); //end ajax
+    		
+    		location.reload();
+    	} else {
+    		alert("취소");
+    	}
+    	
+    });
+    </c:forEach>
+    </script>
+    
 </body>
 </html>

@@ -58,7 +58,7 @@
 	
 	<update id="deleteReview">
 		update review
-		set deleteYn=Y
+		set deleteYn = 'Y'
 		where review_no=#{review_no}
 	</update>
 	
@@ -83,7 +83,7 @@
 				select /*+INDEX_DESC(review pk_review)*/
 				rownum rn, review.*
 				from review
-				where rownum <= #{cri.pageNum} * #{cri.amount} and id = #{id}
+				where rownum <= #{cri.pageNum} * #{cri.amount} and id = #{id} and deleteYn LIKE 'N'
 				)
 			where rn > (#{cri.pageNum} -1) * #{cri.amount}
 		]]>

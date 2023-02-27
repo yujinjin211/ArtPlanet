@@ -103,10 +103,11 @@ public class ReviewController {
 	}
 	
 	//리뷰 삭제
-	@RequestMapping("/deleteReview")
-	public String reviewDelete(int review_no) {
+	@PostMapping("/deleteReview")
+	@ResponseBody
+	public void deleteReview(int review_no, String id) {
+		log.info("Delete Review.........");
 		reviewService.deleteReview(review_no);
-		return "review/review";
 	}
 	
 	//첨부한 이미지 읽기
