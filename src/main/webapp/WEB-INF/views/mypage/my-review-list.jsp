@@ -120,7 +120,7 @@
                     <li><a href="../review/review-read?review_no=${review.review_no }">제목 : ${review.review_title }</a></li>
                 </ul>
                 <div class="vertical-box">
-                    <input type="button" class="btn-style" id="updateBtn${review.review_no }" value="수정">
+                    <input type="button" class="btn-style" onclick="location.href='../review/review-update?review_no=${review.review_no}'" value="수정">
                     <input type="button" class="btn-style" id="deleteBtn${review.review_no }" value="삭제">
                 </div>     
             </div>
@@ -225,7 +225,6 @@
     	} else {
     		alert("취소");
     	}
-    	
     });
     </c:forEach>
     </script>

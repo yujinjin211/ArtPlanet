@@ -118,4 +118,11 @@ public class ReviewController {
 		return new ResponseEntity<>(reviewService.getImageList(review_no), HttpStatus.OK);
 	}
 	
+	//리뷰 수정
+	@RequestMapping("/review-update")
+	public void reivewUpdate(int review_no, Model model) {
+		ReviewVO reviewContent = reviewService.readReview(review_no);
+		model.addAttribute("reviewContent", reviewContent);
+	}
+	
 }
