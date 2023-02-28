@@ -11,6 +11,7 @@ import com.artplanet.myapp.dao.IReviewImageRepository;
 import com.artplanet.myapp.dao.IReviewRepository;
 import com.artplanet.myapp.model.Criteria;
 import com.artplanet.myapp.model.ReviewImageVO;
+import com.artplanet.myapp.model.ReviewJoinExhibitionVO;
 import com.artplanet.myapp.model.ReviewVO;
 
 import lombok.AllArgsConstructor;
@@ -104,6 +105,12 @@ public class ReviewService implements IReviewService {
 	public List<ReviewVO> getReviewListWithPagingFindById(Criteria cri, String id) {
 		log.info("get review list with paging and find by Id : " + id);
 		return reviewRepository.getReviewListWithPagingFindById(cri, id);
+	}
+	
+	@Override
+	public ReviewJoinExhibitionVO readReviewJoinExhibition(int review_no) {
+		log.info("read review and exhibition_info......... : " + review_no);
+		return reviewRepository.readReviewJoinExhibition(review_no);
 	}
 	
 }

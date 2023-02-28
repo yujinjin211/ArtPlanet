@@ -4,6 +4,47 @@
 
 <mapper namespace="com.artplanet.myapp.dao.IReviewRepository">
 
+	<resultMap type="com.artplanet.myapp.model.Exhibition_InfoVO" id="exhibitionMap">
+		<id property="exhibition_no" column="exhibition_no" />
+		<id property="place_no" column="place_no"/>
+		<id property="artist_no" column="artist_no"/>
+		<id property="title" column="title"/>
+		<id property="realm" column="realm"/>
+		<id property="price" column="price"/>
+		<id property="startDate" column="startDate"/>
+		<id property="endDate" column="endDate"/>
+		<id property="intro" column="intro"/>
+		<id property="likeCount" column="likeCount"/>
+		<id property="endYn" column="endYn"/>
+		<id property="visitCount" column="visitCount"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ReviewVO" id="reviewMap">
+		<id property="review_no" column="review_no"/>
+		<id property="id" column="id"/>
+		<id property="exhibition_no" column="exhibition_no"/>
+		<id property="writer_nickName" column="writer_nickName"/>
+		<id property="review_title" column="review_title"/>
+		<id property="review_content" column="review_content"/>
+		<id property="writeDate" column="writeDate"/>
+		<id property="modDate" column="modDate"/>
+		<id property="readCount" column="readCount"/>
+		<id property="deleteYn" column="deleteYn"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ReviewImageVO" id="reviewImageMap">
+		<id property="review_no" column="review_no"/>
+		<id property="image_fileName" column="image_fileName"/>
+		<id property="image_directory" column="image_directory"/>
+		<id property="uuid" column="uuid"/>
+	</resultMap>
+	
+	<resultMap type="com.artplanet.myapp.model.ReviewJoinExhibitionVO" id="ReviewJoinExhibitionVO">
+		<collection property="exhibition" resultMap="exhibitionMap"/>
+		<collection property="review" resultMap="reviewMap"/>
+		<collection property="reviewImage" resultMap="reviewImageMap"/>
+	</resultMap>
+
 	<select id="getReviewList" resultType="com.artplanet.myapp.model.ReviewVO">
 		<![CDATA[
 			select * from review where review_no > 0 and deleteYn like 'N' order by review_no desc
@@ -87,6 +128,14 @@
 				)
 			where rn > (#{cri.pageNum} -1) * #{cri.amount}
 		]]>
+	</select>
+	
+	<select id="readReviewJoinExhibition" resultMap="ReviewJoinExhibitionVO">
+		select *
+		  from review r, exhibition_info e, review_image ri
+		 where r.exhibition_no = e.exhibition_no 
+		 	   and r.review_no = ri.review_no(+)
+		 	   and r.review_no = #{review_no}
 	</select>
 
 </mapper>

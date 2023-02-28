@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.artplanet.myapp.model.Criteria;
 import com.artplanet.myapp.model.ReviewImageVO;
+import com.artplanet.myapp.model.ReviewJoinExhibitionVO;
 import com.artplanet.myapp.model.ReviewVO;
 
 import oracle.ucp.common.ConnectionSource.CreateMode;
@@ -24,4 +25,5 @@ public interface IReviewRepository {
 	public List<ReviewImageVO> getImageList(int review_no);	//첨부한 이미지 읽기
 	
 	public List<ReviewVO> getReviewListWithPagingFindById(@Param("cri") Criteria cri, @Param("id") String id); //페이징 처리된 특정 회원의 리뷰 목록 가져오기
+	public ReviewJoinExhibitionVO readReviewJoinExhibition(int review_no); //리뷰와 전시정보 읽기
 }

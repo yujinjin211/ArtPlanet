@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.artplanet.myapp.model.Criteria;
 import com.artplanet.myapp.model.PageDTO;
 import com.artplanet.myapp.model.ReviewImageVO;
+import com.artplanet.myapp.model.ReviewJoinExhibitionVO;
 import com.artplanet.myapp.model.ReviewVO;
 import com.artplanet.myapp.service.ICommentService;
 import com.artplanet.myapp.service.IExhibitionService;
@@ -121,8 +122,11 @@ public class ReviewController {
 	//리뷰 수정
 	@RequestMapping("/review-update")
 	public void reivewUpdate(int review_no, Model model) {
-		ReviewVO reviewContent = reviewService.readReview(review_no);
+		log.info("Update Review.........");
+		ReviewJoinExhibitionVO reviewContent = reviewService.readReviewJoinExhibition(review_no);
+		
+		log.info("reviewContent : " + reviewContent);
+		
 		model.addAttribute("reviewContent", reviewContent);
 	}
-	
 }

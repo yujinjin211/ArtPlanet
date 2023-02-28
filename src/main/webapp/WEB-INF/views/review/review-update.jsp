@@ -106,20 +106,16 @@
             <input type="hidden" name="writer_nickName" value="${user.nickName }">
                 <table class="table-style" style="text-align: left;">
                     <tr>
-                        <td colspan="2"><input type="text" name="review_title" value="${review.review_title }"></td>
+                        <td colspan="2"><input type="text" name="review_title" value="${reviewContent.review.review_title }"></td>
                     </tr>
                     <tr>
-                    	<td style="width: 8%; text-align: center;">전시 선택</td>
+                    	<td style="width: 8%; text-align: center;">전시 명 </td>
                     	<td>
-                    		<select name="exhibition_no" id="exhibition_no" class="p-exhibition">
-                    			<c:forEach var="exhibition" items="${exhibitionList}" varStatus="status">
-                    				<option value="${exhibition.EXHIBITION_NO}">${exhibition.TITLE }</option>
-                    			</c:forEach>
-                    		</select>
+                    		${reviewContent.exhibition.title }
                     	</td>
                     </tr>
                     <tr>
-                        <td colspan="2"><textarea name="review_content" placeholder="내용을 입력해주세요.">${review.review_content }</textarea></td>
+                        <td colspan="2"><textarea name="review_content">${reviewContent.review.review_content }</textarea></td>
                     </tr>
                     <tr>
                     	<td>
@@ -133,7 +129,6 @@
                 </table>
                 <hr>
                 <button type="submit">작성완료</button>
-            
         </div>
     </div>
 	</form>
